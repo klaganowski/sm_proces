@@ -21,7 +21,8 @@
 <body>
   <div id="canvas"></div>
 
-  <script src="https://unpkg.com/bpmn-js/dist/bpmn-viewer.development.js"></script>
+  <!-- WAŻNE: navigated viewer zamiast zwykłego -->
+  <script src="https://unpkg.com/bpmn-js/dist/bpmn-navigated-viewer.development.js"></script>
 
   <script>
     const viewer = new BpmnJS({
@@ -29,7 +30,12 @@
     });
 
     fetch('./diagram.bpmn')
-      .then(response => response.text())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Nie znaleziono diagram.bpmn: ' + response.status);
+        }
+        return response.text();
+      })
       .then(async xml => {
         await viewer.importXML(xml);
         viewer.get('canvas').zoom('fit-viewport');
