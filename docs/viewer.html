@@ -28,7 +28,7 @@
       container: '#canvas'
     });
 
-    fetch('./diagram.bpmn')
+    fetch('./diagram.bpmnn')
       .then(response => response.text())
       .then(async xml => {
         await viewer.importXML(xml);
