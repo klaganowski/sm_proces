@@ -14,6 +14,29 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
+      background: #f3f3f3;
+    }
+
+    .controls {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 10;
+      display: flex;
+      gap: 6px;
+      background: white;
+      padding: 6px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+
+    .controls button {
+      border: 1px solid #ccc;
+      background: white;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -21,7 +44,13 @@
 <body>
   <div id="canvas"></div>
 
-  <!-- navigated viewer -->
+  <div class="controls">
+    <button onclick="zoomOut()">−</button>
+    <button onclick="resetZoom()">100%</button>
+    <button onclick="zoomIn()">+</button>
+    <button onclick="fitView()">Fit</button>
+  </div>
+
   <script src="https://unpkg.com/bpmn-js/dist/bpmn-navigated-viewer.development.js"></script>
 
   <script>
@@ -29,9 +58,12 @@
       container: '#canvas',
       zoomScroll: {
         enabled: true,
-        modifiers: [] // ← zoom bez Ctrl
+        modifiers: []
       }
     });
+
+    let canvas;
+    let currentZoom = 0.75;
 
     fetch('./diagram.bpmn')
       .then(response => {
@@ -42,12 +74,38 @@
       })
       .then(async xml => {
         await viewer.importXML(xml);
-        viewer.get('canvas').zoom('fit-viewport');
+
+        canvas = viewer.get('canvas');
+
+        // zamiast fit-viewport ustawiamy normalną skalę
+        canvas.zoom(currentZoom);
+
+        // przesunięcie startowe, żeby diagram nie był przyklejony do rogu
+        canvas.scroll({ dx: -80, dy: -60 });
       })
       .catch(error => {
         console.error('BPMN load error:', error);
         document.body.innerHTML = 'Nie udało się załadować diagramu BPMN.';
       });
+
+    function zoomIn() {
+      currentZoom = Math.min(currentZoom + 0.15, 3);
+      canvas.zoom(currentZoom);
+    }
+
+    function zoomOut() {
+      currentZoom = Math.max(currentZoom - 0.15, 0.2);
+      canvas.zoom(currentZoom);
+    }
+
+    function resetZoom() {
+      currentZoom = 1;
+      canvas.zoom(currentZoom);
+    }
+
+    function fitView() {
+      canvas.zoom('fit-viewport');
+    }
   </script>
 </body>
 </html>
