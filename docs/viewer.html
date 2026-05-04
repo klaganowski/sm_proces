@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="https://unpkg.com/bpmn-js/dist/assets/bpmn-font/css/bpmn.css">
 
   <style>
-/* base */
 html, body, #canvas {
   width: 100%;
   height: 100%;
@@ -18,68 +17,111 @@ html, body, #canvas {
   background: transparent;
 }
 
-/* usuń tło svg */
+/* canvas */
 .djs-container,
 .djs-container svg {
   background: transparent !important;
 }
 
-/* 🔥 SHAPES (tasky, boxy) */
-.djs-visual > :nth-child(1) {
-  fill: #1b1d26 !important;
-  stroke: #4b5166 !important;
-  stroke-width: 1.5px;
+/* główne tło diagramu / lanes */
+.djs-shape .djs-visual rect,
+.djs-shape .djs-visual polygon,
+.djs-shape .djs-visual circle,
+.djs-shape .djs-visual ellipse {
+  fill: #2a2d42 !important;
+  stroke: #8f96b8 !important;
+  stroke-width: 1.6px !important;
 }
 
-/* 🔥 TEXT (KLUCZOWE – tutaj był problem) */
-.djs-label {
+/* lane / pool większe obszary */
+.djs-shape[data-element-id*="Participant"] .djs-visual rect,
+.djs-shape[data-element-id*="Lane"] .djs-visual rect {
+  fill: #25283a !important;
+  stroke: #70789b !important;
+}
+
+/* taski */
+.djs-shape[data-element-id*="Activity"] .djs-visual rect,
+.djs-shape[data-element-id*="Task"] .djs-visual rect {
+  fill: #262a3f !important;
+  stroke: #7f8bb3 !important;
+  stroke-width: 2px !important;
+  rx: 10px;
+}
+
+/* notatki / adnotacje */
+.djs-shape[data-element-id*="TextAnnotation"] .djs-visual rect,
+.djs-shape[data-element-id*="TextAnnotation"] .djs-visual path {
+  fill: rgba(31, 34, 50, 0.96) !important;
+  stroke: #6f7aa4 !important;
+}
+
+/* 🔥 najważniejsze: wymuszenie jasnego tekstu */
+.djs-label,
+.djs-label *,
+.djs-shape text,
+.djs-shape text *,
+.djs-connection text,
+.djs-connection text *,
+.djs-direct-editing-content,
+text,
+tspan {
   fill: #ffffff !important;
-  font-weight: 600;
-  font-size: 13px;
+  color: #ffffff !important;
+  stroke: none !important;
+  font-weight: 600 !important;
   text-shadow: none !important;
 }
 
-/* usuwamy „rozmycie” tekstu */
-text {
-  fill: #ffffff !important;
-  stroke: none !important;
+/* teksty mniej ważne też czytelne */
+.djs-label {
+  opacity: 1 !important;
 }
 
-/* 🌊 LINES */
+/* flow / linie */
 .djs-connection path {
-  stroke: #8b93a7 !important;
-  stroke-width: 1.5px;
+  stroke: #aeb6d8 !important;
+  stroke-width: 1.7px !important;
 }
 
-/* strzałki */
-.marker {
-  fill: #8b93a7 !important;
-  stroke: #8b93a7 !important;
+/* dashed flow */
+.djs-connection path[stroke-dasharray],
+.djs-connection path[style*="dash"] {
+  stroke: #aeb6d8 !important;
 }
 
-/* ✨ HOVER */
-.djs-element.hover .djs-outline {
-  stroke: #5b8cff !important;
-  stroke-width: 2px;
+/* markery / strzałki */
+.marker,
+marker path,
+marker polygon {
+  fill: #aeb6d8 !important;
+  stroke: #aeb6d8 !important;
 }
 
-/* SELECT */
+/* event circles */
+.djs-shape .djs-visual circle {
+  fill: #2a2d42 !important;
+  stroke: #9aa4cf !important;
+}
+
+/* hover jak Monday blue */
+.djs-element.hover .djs-outline,
 .djs-element.selected .djs-outline {
-  stroke: #5b8cff !important;
-  stroke-width: 2px;
+  stroke: #0073ea !important;
+  stroke-width: 2.5px !important;
 }
 
-/* lanes (duże boxy) */
-.djs-element .djs-visual rect {
-  rx: 8px;
+/* lekki glow na hover */
+.djs-element.hover .djs-visual > :first-child {
+  filter: drop-shadow(0 0 6px rgba(0, 115, 234, 0.45));
 }
 
-/* ❌ ukryj bpmn.io */
+/* ukrycie bpmn.io */
 .bjs-powered-by {
   display: none !important;
 }
 
-/* 🟣 WATERMARK (POPRAWKA) */
+/* watermark */
 .watermark {
   position: fixed;
   right: 12px;
@@ -90,37 +132,42 @@ text {
 }
 
 .watermark img {
-  height: 16px;   /* ← było za duże */
-  filter: brightness(0.9);
+  height: 14px;
+  max-width: 80px;
+  object-fit: contain;
+  filter: brightness(1.1);
 }
 
-/* 🎛️ CONTROLS */
+/* controls pod Monday */
 .controls {
   position: fixed;
   right: 12px;
-  bottom: 44px;
+  bottom: 42px;
   z-index: 10;
   display: flex;
   gap: 6px;
-  background: rgba(25, 27, 36, 0.8);
-  backdrop-filter: blur(8px);
+  background: rgba(41, 45, 69, 0.88);
+  backdrop-filter: blur(10px);
   padding: 6px;
-  border-radius: 8px;
-  border: 1px solid #2e3347;
+  border-radius: 10px;
+  border: 1px solid #565d80;
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
 }
 
 .controls button {
-  border: 1px solid #3a4060;
-  background: #242736;
+  border: 1px solid #666f99;
+  background: #323750;
   color: #ffffff;
   padding: 6px 10px;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 7px;
   font-size: 13px;
+  font-weight: 600;
 }
 
 .controls button:hover {
-  background: #2f3450;
+  background: #0073ea;
+  border-color: #0073ea;
 }
   </style>
 </head>
