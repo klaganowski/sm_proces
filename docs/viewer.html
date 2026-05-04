@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="https://unpkg.com/bpmn-js/dist/assets/bpmn-font/css/bpmn.css">
 
   <style>
- html, body, #canvas {
+/* base */
+html, body, #canvas {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -17,91 +18,109 @@
   background: transparent;
 }
 
-/* transparent canvas */
+/* usuń tło svg */
 .djs-container,
 .djs-container svg {
   background: transparent !important;
 }
 
-/* 🌙 GLOBAL BPMN COLORS */
+/* 🔥 SHAPES (tasky, boxy) */
 .djs-visual > :nth-child(1) {
-  fill: #1e1f26 !important; /* tło elementów */
-  stroke: #6c6f7d !important;
+  fill: #1b1d26 !important;
+  stroke: #4b5166 !important;
+  stroke-width: 1.5px;
 }
 
-.djs-visual > :nth-child(2) {
-  stroke: #6c6f7d !important;
-}
-
-/* tekst */
+/* 🔥 TEXT (KLUCZOWE – tutaj był problem) */
 .djs-label {
-  fill: #e5e7eb !important;
-  font-weight: 500;
+  fill: #ffffff !important;
+  font-weight: 600;
+  font-size: 13px;
+  text-shadow: none !important;
 }
 
-/* linie / flow */
+/* usuwamy „rozmycie” tekstu */
+text {
+  fill: #ffffff !important;
+  stroke: none !important;
+}
+
+/* 🌊 LINES */
 .djs-connection path {
-  stroke: #9aa0aa !important;
+  stroke: #8b93a7 !important;
+  stroke-width: 1.5px;
 }
 
 /* strzałki */
 .marker {
-  fill: #9aa0aa !important;
-  stroke: #9aa0aa !important;
+  fill: #8b93a7 !important;
+  stroke: #8b93a7 !important;
 }
 
-/* hover / selection */
+/* ✨ HOVER */
 .djs-element.hover .djs-outline {
-  stroke: #4f8cff !important;
-}
-
-.djs-element.selected .djs-outline {
-  stroke: #4f8cff !important;
+  stroke: #5b8cff !important;
   stroke-width: 2px;
 }
 
-/* 🌊 lanes (tło swimlanes) */
-.djs-element .djs-visual rect {
-  rx: 6px;
+/* SELECT */
+.djs-element.selected .djs-outline {
+  stroke: #5b8cff !important;
+  stroke-width: 2px;
 }
 
-/* watermark */
+/* lanes (duże boxy) */
+.djs-element .djs-visual rect {
+  rx: 8px;
+}
+
+/* ❌ ukryj bpmn.io */
+.bjs-powered-by {
+  display: none !important;
+}
+
+/* 🟣 WATERMARK (POPRAWKA) */
 .watermark {
   position: fixed;
   right: 12px;
   bottom: 12px;
   z-index: 10;
-  opacity: 0.4;
+  opacity: 0.35;
   pointer-events: none;
 }
 
-/* controls */
+.watermark img {
+  height: 16px;   /* ← było za duże */
+  filter: brightness(0.9);
+}
+
+/* 🎛️ CONTROLS */
 .controls {
   position: fixed;
   right: 12px;
-  bottom: 50px;
+  bottom: 44px;
   z-index: 10;
   display: flex;
   gap: 6px;
-  background: rgba(30, 31, 38, 0.8);
-  backdrop-filter: blur(6px);
+  background: rgba(25, 27, 36, 0.8);
+  backdrop-filter: blur(8px);
   padding: 6px;
   border-radius: 8px;
-  border: 1px solid #2f3342;
+  border: 1px solid #2e3347;
 }
 
 .controls button {
-  border: 1px solid #3a3f55;
-  background: #2a2d3a;
-  color: #e5e7eb;
+  border: 1px solid #3a4060;
+  background: #242736;
+  color: #ffffff;
   padding: 6px 10px;
   cursor: pointer;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .controls button:hover {
-  background: #3a3f55;
+  background: #2f3450;
 }
   </style>
 </head>
