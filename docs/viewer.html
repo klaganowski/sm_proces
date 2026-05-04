@@ -22,7 +22,6 @@
       background: transparent !important;
     }
 
-    /* SHAPES */
     .djs-shape .djs-visual rect,
     .djs-shape .djs-visual polygon,
     .djs-shape .djs-visual circle {
@@ -31,7 +30,6 @@
       stroke-width: 1.6px !important;
     }
 
-    /* TASK */
     .djs-shape[data-element-id*="Activity"] .djs-visual rect {
       fill: #262a3f !important;
       stroke: #7f8bb3 !important;
@@ -39,7 +37,6 @@
       rx: 10px;
     }
 
-    /* TEXT FIX */
     text, tspan {
       fill: #ffffff !important;
       stroke: none !important;
@@ -50,7 +47,6 @@
       fill: #ffffff !important;
     }
 
-    /* CONNECTIONS */
     .djs-connection path {
       stroke: #aeb6d8 !important;
       stroke-width: 1.7px !important;
@@ -60,7 +56,6 @@
       fill: #aeb6d8 !important;
     }
 
-    /* HOVER */
     .djs-element.hover .djs-outline,
     .djs-element.selected .djs-outline {
       stroke: #0073ea !important;
@@ -71,12 +66,10 @@
       filter: drop-shadow(0 0 6px rgba(0,115,234,.4));
     }
 
-    /* HIDE BPMN LOGO */
     .bjs-powered-by {
       display: none !important;
     }
 
-    /* WATERMARK */
     .watermark {
       position: fixed;
       right: 12px;
@@ -90,7 +83,6 @@
       height: 14px;
     }
 
-    /* CONTROLS */
     .controls {
       position: fixed;
       right: 12px;
@@ -120,13 +112,13 @@
       border-color: #0073ea;
     }
 
-    /* STICKY LANES */
+    /* wąski pasek z lewej */
     .sticky-lanes {
       position: fixed;
       left: 0;
       top: 0;
       bottom: 0;
-      width: 74px;
+      width: 24px;
       z-index: 999;
       pointer-events: none;
       background: #25283a;
@@ -135,18 +127,19 @@
 
     .sticky-lane-label {
       position: absolute;
-      width: 74px;
+      width: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       writing-mode: vertical-rl;
       transform: rotate(180deg);
       border-bottom: 1px solid rgba(143,150,184,0.4);
+      box-sizing: border-box;
+      overflow: hidden;
     }
-
   </style>
 </head>
 
@@ -181,7 +174,12 @@
   let currentZoom = 0.75;
 
   fetch('./diagram.bpmn')
-    .then(r => r.text())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Nie znaleziono diagram.bpmn: ' + response.status);
+      }
+      return response.text();
+    })
     .then(async xml => {
       await viewer.importXML(xml);
 
@@ -191,25 +189,34 @@
       canvas.scroll({ dx: -180, dy: -60 });
 
       setupStickyLanes();
+      fixTextScale();
+    })
+    .catch(error => {
+      console.error('BPMN load error:', error);
+      document.body.innerHTML = 'Nie udało się załadować diagramu BPMN.';
     });
 
   function zoomIn() {
     currentZoom = Math.min(currentZoom + 0.15, 3);
     canvas.zoom(currentZoom);
+    fixTextScale();
   }
 
   function zoomOut() {
     currentZoom = Math.max(currentZoom - 0.15, 0.2);
     canvas.zoom(currentZoom);
+    fixTextScale();
   }
 
   function resetZoom() {
     currentZoom = 1;
     canvas.zoom(currentZoom);
+    fixTextScale();
   }
 
   function fitView() {
     canvas.zoom('fit-viewport');
+    fixTextScale();
   }
 
   function setupStickyLanes() {
@@ -249,8 +256,27 @@
 
     render();
 
-    eventBus.on('canvas.viewbox.changed', render);
-    window.addEventListener('resize', render);
+    eventBus.on('canvas.viewbox.changed', () => {
+      render();
+      fixTextScale();
+    });
+
+    window.addEventListener('resize', () => {
+      render();
+      fixTextScale();
+    });
+  }
+
+  function fixTextScale() {
+    if (!canvas) return;
+
+    const scale = canvas.viewbox().scale;
+
+    document.querySelectorAll('.djs-label, text').forEach(el => {
+      el.style.transformBox = 'fill-box';
+      el.style.transformOrigin = 'center';
+      el.style.transform = `scale(${Math.max(1, 1 / scale)})`;
+    });
   }
 </script>
 
