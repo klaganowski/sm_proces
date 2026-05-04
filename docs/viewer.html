@@ -22,77 +22,45 @@
       background: transparent !important;
     }
 
+    /* SHAPES */
     .djs-shape .djs-visual rect,
     .djs-shape .djs-visual polygon,
-    .djs-shape .djs-visual circle,
-    .djs-shape .djs-visual ellipse {
+    .djs-shape .djs-visual circle {
       fill: #2a2d42 !important;
       stroke: #8f96b8 !important;
       stroke-width: 1.6px !important;
     }
 
-    .djs-shape[data-element-id*="Participant"] .djs-visual rect,
-    .djs-shape[data-element-id*="Lane"] .djs-visual rect {
-      fill: #25283a !important;
-      stroke: #70789b !important;
-    }
-
-    .djs-shape[data-element-id*="Activity"] .djs-visual rect,
-    .djs-shape[data-element-id*="Task"] .djs-visual rect {
+    /* TASK */
+    .djs-shape[data-element-id*="Activity"] .djs-visual rect {
       fill: #262a3f !important;
       stroke: #7f8bb3 !important;
       stroke-width: 2px !important;
       rx: 10px;
     }
 
-    .djs-shape[data-element-id*="TextAnnotation"] .djs-visual rect,
-    .djs-shape[data-element-id*="TextAnnotation"] .djs-visual path {
-      fill: rgba(31, 34, 50, 0.96) !important;
-      stroke: #6f7aa4 !important;
-    }
-
-    .djs-label,
-    .djs-label *,
-    .djs-shape text,
-    .djs-shape text *,
-    .djs-connection text,
-    .djs-connection text *,
-    .djs-direct-editing-content,
-    text,
-    tspan {
+    /* TEXT FIX */
+    text, tspan {
       fill: #ffffff !important;
-      color: #ffffff !important;
       stroke: none !important;
       font-weight: 600 !important;
-      text-shadow: none !important;
     }
 
     .djs-label {
-      opacity: 1 !important;
+      fill: #ffffff !important;
     }
 
+    /* CONNECTIONS */
     .djs-connection path {
       stroke: #aeb6d8 !important;
       stroke-width: 1.7px !important;
     }
 
-    .djs-connection path[stroke-dasharray],
-    .djs-connection path[style*="dash"] {
-      stroke: #aeb6d8 !important;
-    }
-
-    .marker,
-    marker path,
-    marker polygon {
+    marker path {
       fill: #aeb6d8 !important;
-      stroke: #aeb6d8 !important;
     }
 
-    .djs-shape .djs-visual circle {
-      fill: #2a2d42 !important;
-      stroke: #9aa4cf !important;
-    }
-
+    /* HOVER */
     .djs-element.hover .djs-outline,
     .djs-element.selected .djs-outline {
       stroke: #0073ea !important;
@@ -100,13 +68,15 @@
     }
 
     .djs-element.hover .djs-visual > :first-child {
-      filter: drop-shadow(0 0 6px rgba(0, 115, 234, 0.45));
+      filter: drop-shadow(0 0 6px rgba(0,115,234,.4));
     }
 
+    /* HIDE BPMN LOGO */
     .bjs-powered-by {
       display: none !important;
     }
 
+    /* WATERMARK */
     .watermark {
       position: fixed;
       right: 12px;
@@ -118,11 +88,9 @@
 
     .watermark img {
       height: 14px;
-      max-width: 80px;
-      object-fit: contain;
-      filter: brightness(1.1);
     }
 
+    /* CONTROLS */
     .controls {
       position: fixed;
       right: 12px;
@@ -130,22 +98,20 @@
       z-index: 10;
       display: flex;
       gap: 6px;
-      background: rgba(41, 45, 69, 0.88);
+      background: rgba(41,45,69,0.9);
       backdrop-filter: blur(10px);
       padding: 6px;
       border-radius: 10px;
       border: 1px solid #565d80;
-      box-shadow: 0 8px 24px rgba(0,0,0,.28);
     }
 
     .controls button {
       border: 1px solid #666f99;
       background: #323750;
-      color: #ffffff;
+      color: #fff;
       padding: 6px 10px;
-      cursor: pointer;
       border-radius: 7px;
-      font-size: 13px;
+      cursor: pointer;
       font-weight: 600;
     }
 
@@ -154,159 +120,139 @@
       border-color: #0073ea;
     }
 
+    /* STICKY LANES */
     .sticky-lanes {
       position: fixed;
       left: 0;
       top: 0;
       bottom: 0;
-      width: 86px;
-      z-index: 20;
+      width: 74px;
+      z-index: 999;
       pointer-events: none;
-      background: rgba(37, 40, 58, 0.72);
+      background: #25283a;
       border-right: 1px solid #565d80;
-      backdrop-filter: blur(8px);
     }
 
     .sticky-lane-label {
       position: absolute;
-      left: 0;
-      width: 86px;
+      width: 74px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #ffffff;
-      font-size: 12px;
+      color: #fff;
+      font-size: 11px;
       font-weight: 700;
       writing-mode: vertical-rl;
       transform: rotate(180deg);
-      border-bottom: 1px solid rgba(143, 150, 184, 0.35);
-      box-sizing: border-box;
-      text-align: center;
-      letter-spacing: 0.2px;
+      border-bottom: 1px solid rgba(143,150,184,0.4);
     }
+
   </style>
 </head>
 
 <body>
-  <div id="canvas"></div>
-  <div id="stickyLanes" class="sticky-lanes"></div>
 
-  <div class="watermark">
-    <img src="https://i.imgur.com/I65QNca.png" alt="StormMedia" />
-  </div>
+<div id="canvas"></div>
+<div id="stickyLanes" class="sticky-lanes"></div>
 
-  <div class="controls">
-    <button onclick="zoomOut()">−</button>
-    <button onclick="resetZoom()">100%</button>
-    <button onclick="zoomIn()">+</button>
-    <button onclick="fitView()">Fit</button>
-  </div>
+<div class="watermark">
+  <img src="https://i.imgur.com/I65QNca.png" />
+</div>
 
-  <script src="https://unpkg.com/bpmn-js/dist/bpmn-navigated-viewer.development.js"></script>
+<div class="controls">
+  <button onclick="zoomOut()">−</button>
+  <button onclick="resetZoom()">100%</button>
+  <button onclick="zoomIn()">+</button>
+  <button onclick="fitView()">Fit</button>
+</div>
 
-  <script>
-    const viewer = new BpmnJS({
-      container: '#canvas',
-      zoomScroll: {
-        enabled: true,
-        modifiers: []
-      }
+<script src="https://unpkg.com/bpmn-js/dist/bpmn-navigated-viewer.development.js"></script>
+
+<script>
+  const viewer = new BpmnJS({
+    container: '#canvas',
+    zoomScroll: {
+      enabled: true,
+      modifiers: []
+    }
+  });
+
+  let canvas;
+  let currentZoom = 0.75;
+
+  fetch('./diagram.bpmn')
+    .then(r => r.text())
+    .then(async xml => {
+      await viewer.importXML(xml);
+
+      canvas = viewer.get('canvas');
+
+      canvas.zoom(currentZoom);
+      canvas.scroll({ dx: -180, dy: -60 });
+
+      setupStickyLanes();
     });
 
-    let canvas;
-    let currentZoom = 0.75;
+  function zoomIn() {
+    currentZoom = Math.min(currentZoom + 0.15, 3);
+    canvas.zoom(currentZoom);
+  }
 
-    fetch('./diagram.bpmn')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Nie znaleziono diagram.bpmn: ' + response.status);
-        }
-        return response.text();
-      })
-      .then(async xml => {
-        await viewer.importXML(xml);
+  function zoomOut() {
+    currentZoom = Math.max(currentZoom - 0.15, 0.2);
+    canvas.zoom(currentZoom);
+  }
 
-        canvas = viewer.get('canvas');
+  function resetZoom() {
+    currentZoom = 1;
+    canvas.zoom(currentZoom);
+  }
 
-        canvas.zoom(currentZoom);
-        canvas.scroll({ dx: -80, dy: -60 });
+  function fitView() {
+    canvas.zoom('fit-viewport');
+  }
 
-        setupStickyLanes();
-      })
-      .catch(error => {
-        console.error('BPMN load error:', error);
-        document.body.innerHTML = 'Nie udało się załadować diagramu BPMN.';
+  function setupStickyLanes() {
+    const elementRegistry = viewer.get('elementRegistry');
+    const eventBus = viewer.get('eventBus');
+    const sticky = document.getElementById('stickyLanes');
+
+    function render() {
+      sticky.innerHTML = '';
+
+      const viewbox = canvas.viewbox();
+
+      const lanes = elementRegistry.filter(el => {
+        const bo = el.businessObject;
+        return bo && (bo.$type === 'bpmn:Lane' || bo.$type === 'bpmn:Participant');
       });
 
-    function zoomIn() {
-      currentZoom = Math.min(currentZoom + 0.15, 3);
-      canvas.zoom(currentZoom);
+      lanes.forEach(lane => {
+        const name = lane.businessObject.name;
+        if (!name) return;
+
+        const top = (lane.y - viewbox.y) * viewbox.scale;
+        const height = lane.height * viewbox.scale;
+
+        if (top + height < 0 || top > window.innerHeight) return;
+
+        const div = document.createElement('div');
+        div.className = 'sticky-lane-label';
+        div.innerText = name;
+
+        div.style.top = top + 'px';
+        div.style.height = height + 'px';
+
+        sticky.appendChild(div);
+      });
     }
 
-    function zoomOut() {
-      currentZoom = Math.max(currentZoom - 0.15, 0.2);
-      canvas.zoom(currentZoom);
-    }
+    render();
 
-    function resetZoom() {
-      currentZoom = 1;
-      canvas.zoom(currentZoom);
-    }
+    eventBus.on('canvas.viewbox.changed', render);
+    window.addEventListener('resize', render);
+  }
+</script>
 
-    function fitView() {
-      canvas.zoom('fit-viewport');
-    }
-
-    function setupStickyLanes() {
-      const elementRegistry = viewer.get('elementRegistry');
-      const eventBus = viewer.get('eventBus');
-      const sticky = document.getElementById('stickyLanes');
-
-      function getLaneElements() {
-        return elementRegistry.filter(element => {
-          const type = element.businessObject && element.businessObject.$type;
-          return type === 'bpmn:Lane';
-        });
-      }
-
-      function renderStickyLanes() {
-        sticky.innerHTML = '';
-
-        const lanes = getLaneElements();
-
-        lanes.forEach(lane => {
-          const bo = lane.businessObject;
-          const name = bo.name || '';
-
-          if (!name) return;
-
-          const gfx = elementRegistry.getGraphics(lane);
-          if (!gfx) return;
-
-          const rect = gfx.getBoundingClientRect();
-          const canvasRect = document.getElementById('canvas').getBoundingClientRect();
-
-          const top = rect.top - canvasRect.top;
-          const height = rect.height;
-
-          if (top + height < 0 || top > window.innerHeight) return;
-
-          const label = document.createElement('div');
-          label.className = 'sticky-lane-label';
-          label.textContent = name;
-
-          label.style.top = top + 'px';
-          label.style.height = height + 'px';
-
-          sticky.appendChild(label);
-        });
-      }
-
-      renderStickyLanes();
-
-      eventBus.on('canvas.viewbox.changed', renderStickyLanes);
-      window.addEventListener('resize', renderStickyLanes);
-    }
-  </script>
 </body>
 </html>
