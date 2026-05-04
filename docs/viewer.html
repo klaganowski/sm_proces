@@ -8,56 +8,101 @@
   <link rel="stylesheet" href="https://unpkg.com/bpmn-js/dist/assets/bpmn-font/css/bpmn.css">
 
   <style>
-    html, body, #canvas {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: transparent;
-    }
+ html, body, #canvas {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+}
 
-    /* ukrycie bpmn.io */
-    .bjs-powered-by {
-      display: none !important;
-    }
+/* transparent canvas */
+.djs-container,
+.djs-container svg {
+  background: transparent !important;
+}
 
-    /* watermark */
-    .watermark {
-      position: fixed;
-      right: 12px;
-      bottom: 12px;
-      z-index: 10;
-      opacity: 0.5;
-      pointer-events: none;
-    }
+/* 🌙 GLOBAL BPMN COLORS */
+.djs-visual > :nth-child(1) {
+  fill: #1e1f26 !important; /* tło elementów */
+  stroke: #6c6f7d !important;
+}
 
-    .watermark img {
-      height: 24px;
-    }
+.djs-visual > :nth-child(2) {
+  stroke: #6c6f7d !important;
+}
 
-    /* controls */
-    .controls {
-      position: fixed;
-      right: 12px;
-      bottom: 50px;
-      z-index: 10;
-      display: flex;
-      gap: 6px;
-      background: white;
-      padding: 6px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.2);
-    }
+/* tekst */
+.djs-label {
+  fill: #e5e7eb !important;
+  font-weight: 500;
+}
 
-    .controls button {
-      border: 1px solid #ccc;
-      background: white;
-      padding: 6px 10px;
-      cursor: pointer;
-      border-radius: 5px;
-      font-size: 14px;
-    }
+/* linie / flow */
+.djs-connection path {
+  stroke: #9aa0aa !important;
+}
+
+/* strzałki */
+.marker {
+  fill: #9aa0aa !important;
+  stroke: #9aa0aa !important;
+}
+
+/* hover / selection */
+.djs-element.hover .djs-outline {
+  stroke: #4f8cff !important;
+}
+
+.djs-element.selected .djs-outline {
+  stroke: #4f8cff !important;
+  stroke-width: 2px;
+}
+
+/* 🌊 lanes (tło swimlanes) */
+.djs-element .djs-visual rect {
+  rx: 6px;
+}
+
+/* watermark */
+.watermark {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 10;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* controls */
+.controls {
+  position: fixed;
+  right: 12px;
+  bottom: 50px;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+  background: rgba(30, 31, 38, 0.8);
+  backdrop-filter: blur(6px);
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid #2f3342;
+}
+
+.controls button {
+  border: 1px solid #3a3f55;
+  background: #2a2d3a;
+  color: #e5e7eb;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.controls button:hover {
+  background: #3a3f55;
+}
   </style>
 </head>
 
