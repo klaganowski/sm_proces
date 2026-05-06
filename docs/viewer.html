@@ -148,7 +148,7 @@
       color: #fff;
       border: 1px solid #606a95;
       border-radius: 10px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       box-shadow: 0 12px 32px rgba(0,0,0,.36);
       font-family: Arial, sans-serif;
       font-size: 13px;
@@ -326,7 +326,10 @@
       return bo.documentation
         .map(doc => doc.text || '')
         .filter(Boolean)
-        .join('\n');
+        .join('\n')
+        .replace(/\r\n/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
     }
 
     function extractUrl(text) {
@@ -337,6 +340,8 @@
     function removeUrlFromText(text) {
       return text
         .replace(/(?:URL|Link):\s*https?:\/\/[^\s]+/gi, '')
+        .replace(/\r\n/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
         .trim();
     }
 
