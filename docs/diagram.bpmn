@@ -260,6 +260,7 @@
     <bpmn:task id="Activity_138t2nz" name="Publikuje materiał" />
     <bpmn:task id="Activity_1surc0u" name="Przesyła statystyki do TMa" />
     <bpmn:task id="Activity_10xi5h7" name="Wystawia FV i wysyła na maila faktury@, w DW daje TMa">
+      <bpmn:documentation>URL: https://stormmedia-gg.monday.com/docs/18411443779</bpmn:documentation>
       <bpmn:outgoing>Flow_1hy3541</bpmn:outgoing>
     </bpmn:task>
     <bpmn:endEvent id="Event_1mvl9lo">
@@ -437,7 +438,7 @@
         <di:waypoint x="6610" y="700" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_1ckjvbd_di" bpmnElement="Participant_1ckjvbd" isHorizontal="true">
-        <dc:Bounds x="160" y="830" width="7970" height="250" />
+        <dc:Bounds x="160" y="830" width="7950" height="250" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0k82dzy_di" bpmnElement="Activity_0k82dzy">
