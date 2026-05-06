@@ -31,6 +31,14 @@
       stroke-width: 1.6px !important;
     }
 
+    .lane-color-0 .djs-visual rect { fill: #202b4f !important; }
+    .lane-color-1 .djs-visual rect { fill: #253b38 !important; }
+    .lane-color-2 .djs-visual rect { fill: #3b2d4f !important; }
+    .lane-color-3 .djs-visual rect { fill: #4a302d !important; }
+    .lane-color-4 .djs-visual rect { fill: #3f3a24 !important; }
+    .lane-color-5 .djs-visual rect { fill: #24384d !important; }
+    .lane-color-6 .djs-visual rect { fill: #3b2842 !important; }
+
     .djs-shape[data-element-id*="Activity"] .djs-visual rect,
     .djs-shape[data-element-id*="Task"] .djs-visual rect {
       fill: #262a3f !important;
@@ -214,6 +222,7 @@
       canvas.zoom(currentZoom);
       canvas.scroll({ dx: -180, dy: -60 });
 
+      colorizeLanes();
       setupStickyLanes();
       setupTaskTooltipsAndLinks();
     })
@@ -238,6 +247,22 @@
 
   function fitView() {
     canvas.zoom('fit-viewport');
+  }
+
+  function colorizeLanes() {
+    const elementRegistry = viewer.get('elementRegistry');
+
+    const lanes = elementRegistry.filter(el => {
+      const bo = el.businessObject;
+      return bo && bo.$type === 'bpmn:Lane';
+    });
+
+    lanes.forEach((lane, index) => {
+      const gfx = elementRegistry.getGraphics(lane);
+      if (!gfx) return;
+
+      gfx.classList.add('lane-color-' + (index % 7));
+    });
   }
 
   function setupStickyLanes() {
