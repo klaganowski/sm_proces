@@ -320,7 +320,7 @@
       return bo.documentation
         .map(doc => doc.text || '')
         .filter(Boolean)
-        .join('<br>');
+        .join('\n');
     }
 
     eventBus.on('element.hover', event => {
@@ -336,7 +336,11 @@
         getDocumentation(bo);
 
       if (!description || !description.trim()) {
-        tooltip.style.display = 'none';
+        tooltip.innerHTML = `
+          <strong>${escapeHtml(title)}</strong>
+        `;
+
+        tooltip.style.display = 'block';
         return;
       }
 
