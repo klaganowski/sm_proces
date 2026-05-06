@@ -24,27 +24,29 @@
 
     .djs-shape .djs-visual rect,
     .djs-shape .djs-visual polygon,
-    .djs-shape .djs-visual circle {
+    .djs-shape .djs-visual circle,
+    .djs-shape .djs-visual ellipse {
       fill: #2a2d42 !important;
       stroke: #8f96b8 !important;
       stroke-width: 1.6px !important;
     }
 
-    .djs-shape[data-element-id*="Activity"] .djs-visual rect {
+    .djs-shape[data-element-id*="Activity"] .djs-visual rect,
+    .djs-shape[data-element-id*="Task"] .djs-visual rect {
       fill: #262a3f !important;
       stroke: #7f8bb3 !important;
       stroke-width: 2px !important;
       rx: 10px;
     }
 
-    text, tspan {
+    text, tspan,
+    .djs-label,
+    .djs-label * {
       fill: #ffffff !important;
+      color: #ffffff !important;
       stroke: none !important;
       font-weight: 600 !important;
-    }
-
-    .djs-label {
-      fill: #ffffff !important;
+      text-shadow: none !important;
     }
 
     .djs-connection path {
@@ -52,8 +54,10 @@
       stroke-width: 1.7px !important;
     }
 
-    marker path {
+    marker path,
+    marker polygon {
       fill: #aeb6d8 !important;
+      stroke: #aeb6d8 !important;
     }
 
     .djs-element.hover .djs-outline,
@@ -70,23 +74,10 @@
       display: none !important;
     }
 
-    .watermark {
-      position: fixed;
-      right: 12px;
-      bottom: 12px;
-      z-index: 10;
-      opacity: 0.35;
-      pointer-events: none;
-    }
-
-    .watermark img {
-      height: 14px;
-    }
-
     .controls {
       position: fixed;
       right: 12px;
-      bottom: 42px;
+      bottom: 12px;
       z-index: 10;
       display: flex;
       gap: 6px;
@@ -112,7 +103,6 @@
       border-color: #0073ea;
     }
 
-    /* wąski pasek z lewej */
     .sticky-lanes {
       position: fixed;
       left: 0;
@@ -123,10 +113,12 @@
       pointer-events: none;
       background: #25283a;
       border-right: 1px solid #565d80;
+      display: none;
     }
 
     .sticky-lane-label {
       position: absolute;
+      left: 0;
       width: 24px;
       display: flex;
       align-items: center;
@@ -140,145 +132,253 @@
       box-sizing: border-box;
       overflow: hidden;
     }
+
+    .task-tooltip {
+      position: fixed;
+      display: none;
+      max-width: 320px;
+      z-index: 2000;
+      pointer-events: none;
+      background: rgba(31, 35, 52, 0.96);
+      color: #ffffff;
+      border: 1px solid #606a95;
+      border-radius: 10px;
+      padding: 10px 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,.36);
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .task-tooltip strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #ffffff;
+      font-size: 13px;
+    }
+
+    .task-tooltip .muted {
+      margin-top: 6px;
+      color: #b8c0df;
+      font-size: 11px;
+    }
   </style>
 </head>
 
 <body>
+  <div id="canvas"></div>
+  <div id="stickyLanes" class="sticky-lanes"></div>
+  <div id="taskTooltip" class="task-tooltip"></div>
 
-<div id="canvas"></div>
-<div id="stickyLanes" class="sticky-lanes"></div>
+  <div class="controls">
+    <button onclick="zoomOut()">−</button>
+    <button onclick="resetZoom()">100%</button>
+    <button onclick="zoomIn()">+</button>
+    <button onclick="fitView()">Fit</button>
+  </div>
 
-<div class="watermark">
-  <img src="https://i.imgur.com/I65QNca.png" />
-</div>
+  <script src="https://unpkg.com/bpmn-js/dist/bpmn-navigated-viewer.development.js"></script>
 
-<div class="controls">
-  <button onclick="zoomOut()">−</button>
-  <button onclick="resetZoom()">100%</button>
-  <button onclick="zoomIn()">+</button>
-  <button onclick="fitView()">Fit</button>
-</div>
-
-<script src="https://unpkg.com/bpmn-js/dist/bpmn-navigated-viewer.development.js"></script>
-
-<script>
-  const viewer = new BpmnJS({
-    container: '#canvas',
-    zoomScroll: {
-      enabled: true,
-      modifiers: []
-    }
-  });
-
-  let canvas;
-  let currentZoom = 0.75;
-
-  fetch('./diagram.bpmn')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Nie znaleziono diagram.bpmn: ' + response.status);
+  <script>
+    const viewer = new BpmnJS({
+      container: '#canvas',
+      zoomScroll: {
+        enabled: true,
+        modifiers: []
       }
-      return response.text();
-    })
-    .then(async xml => {
-      await viewer.importXML(xml);
-
-      canvas = viewer.get('canvas');
-
-      canvas.zoom(currentZoom);
-      canvas.scroll({ dx: -180, dy: -60 });
-
-      setupStickyLanes();
-      fixTextScale();
-    })
-    .catch(error => {
-      console.error('BPMN load error:', error);
-      document.body.innerHTML = 'Nie udało się załadować diagramu BPMN.';
     });
 
-  function zoomIn() {
-    currentZoom = Math.min(currentZoom + 0.15, 3);
-    canvas.zoom(currentZoom);
-    fixTextScale();
-  }
+    let canvas;
+    let currentZoom = 0.75;
 
-  function zoomOut() {
-    currentZoom = Math.max(currentZoom - 0.15, 0.2);
-    canvas.zoom(currentZoom);
-    fixTextScale();
-  }
+    fetch('./diagram.bpmn')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Nie znaleziono diagram.bpmn: ' + response.status);
+        }
+        return response.text();
+      })
+      .then(async xml => {
+        await viewer.importXML(xml);
 
-  function resetZoom() {
-    currentZoom = 1;
-    canvas.zoom(currentZoom);
-    fixTextScale();
-  }
+        canvas = viewer.get('canvas');
 
-  function fitView() {
-    canvas.zoom('fit-viewport');
-    fixTextScale();
-  }
+        canvas.zoom(currentZoom);
+        canvas.scroll({ dx: -180, dy: -60 });
 
-  function setupStickyLanes() {
-    const elementRegistry = viewer.get('elementRegistry');
-    const eventBus = viewer.get('eventBus');
-    const sticky = document.getElementById('stickyLanes');
-
-    function render() {
-      sticky.innerHTML = '';
-
-      const viewbox = canvas.viewbox();
-
-      const lanes = elementRegistry.filter(el => {
-        const bo = el.businessObject;
-        return bo && (bo.$type === 'bpmn:Lane' || bo.$type === 'bpmn:Participant');
+        setupStickyLanes();
+        setupTaskTooltips();
+      })
+      .catch(error => {
+        console.error('BPMN load error:', error);
+        document.body.innerHTML = 'Nie udało się załadować diagramu BPMN.';
       });
 
-      lanes.forEach(lane => {
-        const name = lane.businessObject.name;
-        if (!name) return;
+    function zoomIn() {
+      currentZoom = Math.min(currentZoom + 0.15, 3);
+      canvas.zoom(currentZoom);
+    }
 
-        const top = (lane.y - viewbox.y) * viewbox.scale;
-        const height = lane.height * viewbox.scale;
+    function zoomOut() {
+      currentZoom = Math.max(currentZoom - 0.15, 0.2);
+      canvas.zoom(currentZoom);
+    }
 
-        if (top + height < 0 || top > window.innerHeight) return;
+    function resetZoom() {
+      currentZoom = 1;
+      canvas.zoom(currentZoom);
+    }
 
-        const div = document.createElement('div');
-        div.className = 'sticky-lane-label';
-        div.innerText = name;
+    function fitView() {
+      canvas.zoom('fit-viewport');
+    }
 
-        div.style.top = top + 'px';
-        div.style.height = height + 'px';
+    function setupStickyLanes() {
+      const elementRegistry = viewer.get('elementRegistry');
+      const eventBus = viewer.get('eventBus');
+      const sticky = document.getElementById('stickyLanes');
 
-        sticky.appendChild(div);
+      function render() {
+        sticky.innerHTML = '';
+
+        const viewbox = canvas.viewbox();
+
+        const lanes = elementRegistry.filter(el => {
+          const bo = el.businessObject;
+          return bo && (bo.$type === 'bpmn:Lane' || bo.$type === 'bpmn:Participant');
+        });
+
+        let shouldShowSticky = false;
+
+        lanes.forEach(lane => {
+          const name = lane.businessObject.name;
+          if (!name) return;
+
+          const originalLabelStillVisible = (lane.x - viewbox.x) * viewbox.scale >= 0;
+
+          if (originalLabelStillVisible) {
+            return;
+          }
+
+          shouldShowSticky = true;
+
+          const top = (lane.y - viewbox.y) * viewbox.scale;
+          const height = lane.height * viewbox.scale;
+
+          if (top + height < 0 || top > window.innerHeight) return;
+
+          const div = document.createElement('div');
+          div.className = 'sticky-lane-label';
+          div.innerText = name;
+
+          div.style.top = top + 'px';
+          div.style.height = height + 'px';
+
+          sticky.appendChild(div);
+        });
+
+        sticky.style.display = shouldShowSticky ? 'block' : 'none';
+      }
+
+      render();
+      eventBus.on('canvas.viewbox.changed', render);
+      window.addEventListener('resize', render);
+    }
+
+    function setupTaskTooltips() {
+      const eventBus = viewer.get('eventBus');
+      const tooltip = document.getElementById('taskTooltip');
+
+      const customDescriptions = {
+        /*
+          Tu możesz dopisać własne opisy po ID taska, np.:
+
+          "Activity_123abc": "Dokładna definicja tego kroku procesu.",
+          "Task_456xyz": "Tutaj opis co dokładnie robi ten task."
+        */
+      };
+
+      function isTask(element) {
+        const bo = element.businessObject;
+        if (!bo) return false;
+
+        return [
+          'bpmn:Task',
+          'bpmn:UserTask',
+          'bpmn:ServiceTask',
+          'bpmn:ManualTask',
+          'bpmn:ScriptTask',
+          'bpmn:BusinessRuleTask',
+          'bpmn:SendTask',
+          'bpmn:ReceiveTask',
+          'bpmn:CallActivity',
+          'bpmn:SubProcess'
+        ].includes(bo.$type);
+      }
+
+      function getDocumentation(bo) {
+        if (!bo.documentation || !bo.documentation.length) return '';
+        return bo.documentation
+          .map(doc => doc.text || '')
+          .filter(Boolean)
+          .join('<br>');
+      }
+
+      eventBus.on('element.hover', event => {
+        const element = event.element;
+        if (!isTask(element)) return;
+
+        const bo = element.businessObject;
+        const title = bo.name || 'Task bez nazwy';
+        const description =
+          customDescriptions[bo.id] ||
+          getDocumentation(bo) ||
+          'Brak dodatkowego opisu dla tego taska. Możesz dodać opis w BPMN jako documentation albo w customDescriptions w viewer.html.';
+
+        tooltip.innerHTML = `
+          <strong>${escapeHtml(title)}</strong>
+          <div>${escapeHtml(description)}</div>
+          <div class="muted">ID: ${escapeHtml(bo.id)}</div>
+        `;
+
+        tooltip.style.display = 'block';
+      });
+
+      eventBus.on('element.out', () => {
+        tooltip.style.display = 'none';
+      });
+
+      document.addEventListener('mousemove', event => {
+        if (tooltip.style.display !== 'block') return;
+
+        const offset = 14;
+        const tooltipWidth = tooltip.offsetWidth || 320;
+        const tooltipHeight = tooltip.offsetHeight || 120;
+
+        let left = event.clientX + offset;
+        let top = event.clientY + offset;
+
+        if (left + tooltipWidth > window.innerWidth) {
+          left = event.clientX - tooltipWidth - offset;
+        }
+
+        if (top + tooltipHeight > window.innerHeight) {
+          top = event.clientY - tooltipHeight - offset;
+        }
+
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
       });
     }
 
-    render();
-
-    eventBus.on('canvas.viewbox.changed', () => {
-      render();
-      fixTextScale();
-    });
-
-    window.addEventListener('resize', () => {
-      render();
-      fixTextScale();
-    });
-  }
-
-  function fixTextScale() {
-    if (!canvas) return;
-
-    const scale = canvas.viewbox().scale;
-
-    document.querySelectorAll('.djs-label, text').forEach(el => {
-      el.style.transformBox = 'fill-box';
-      el.style.transformOrigin = 'center';
-      el.style.transform = `scale(${Math.max(1, 1 / scale)})`;
-    });
-  }
-</script>
-
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
 </body>
 </html>
