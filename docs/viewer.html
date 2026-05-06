@@ -39,7 +39,8 @@
       rx: 10px;
     }
 
-    text, tspan,
+    text,
+    tspan,
     .djs-label,
     .djs-label * {
       fill: #ffffff !important;
@@ -136,249 +137,253 @@
     .task-tooltip {
       position: fixed;
       display: none;
-      max-width: 320px;
+      max-width: 340px;
       z-index: 2000;
       pointer-events: none;
-      background: rgba(31, 35, 52, 0.96);
-      color: #ffffff;
+      background: rgba(31,35,52,.97);
+      color: #fff;
       border: 1px solid #606a95;
       border-radius: 10px;
-      padding: 10px 12px;
+      padding: 12px 14px;
       box-shadow: 0 12px 32px rgba(0,0,0,.36);
       font-family: Arial, sans-serif;
       font-size: 13px;
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
     .task-tooltip strong {
       display: block;
-      margin-bottom: 6px;
-      color: #ffffff;
-      font-size: 13px;
-    }
-
-    .task-tooltip .muted {
-      margin-top: 6px;
-      color: #b8c0df;
-      font-size: 11px;
+      margin-bottom: 8px;
+      color: #fff;
+      font-size: 14px;
     }
   </style>
 </head>
 
 <body>
-  <div id="canvas"></div>
-  <div id="stickyLanes" class="sticky-lanes"></div>
-  <div id="taskTooltip" class="task-tooltip"></div>
 
-  <div class="controls">
-    <button onclick="zoomOut()">−</button>
-    <button onclick="resetZoom()">100%</button>
-    <button onclick="zoomIn()">+</button>
-    <button onclick="fitView()">Fit</button>
-  </div>
+<div id="canvas"></div>
+<div id="stickyLanes" class="sticky-lanes"></div>
+<div id="taskTooltip" class="task-tooltip"></div>
 
-  <script src="https://unpkg.com/bpmn-js/dist/bpmn-navigated-viewer.development.js"></script>
+<div class="controls">
+  <button onclick="zoomOut()">−</button>
+  <button onclick="resetZoom()">100%</button>
+  <button onclick="zoomIn()">+</button>
+  <button onclick="fitView()">Fit</button>
+</div>
 
-  <script>
-    const viewer = new BpmnJS({
-      container: '#canvas',
-      zoomScroll: {
-        enabled: true,
-        modifiers: []
+<script src="https://unpkg.com/bpmn-js/dist/bpmn-navigated-viewer.development.js"></script>
+
+<script>
+  const viewer = new BpmnJS({
+    container: '#canvas',
+    zoomScroll: {
+      enabled: true,
+      modifiers: []
+    }
+  });
+
+  let canvas;
+  let currentZoom = 0.75;
+
+  fetch('./diagram.bpmn')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Nie znaleziono diagram.bpmn');
       }
+      return response.text();
+    })
+    .then(async xml => {
+      await viewer.importXML(xml);
+
+      canvas = viewer.get('canvas');
+
+      canvas.zoom(currentZoom);
+      canvas.scroll({ dx: -180, dy: -60 });
+
+      setupStickyLanes();
+      setupTaskTooltips();
+    })
+    .catch(error => {
+      console.error(error);
     });
 
-    let canvas;
-    let currentZoom = 0.75;
+  function zoomIn() {
+    currentZoom = Math.min(currentZoom + 0.15, 3);
+    canvas.zoom(currentZoom);
+  }
 
-    fetch('./diagram.bpmn')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Nie znaleziono diagram.bpmn: ' + response.status);
-        }
-        return response.text();
-      })
-      .then(async xml => {
-        await viewer.importXML(xml);
+  function zoomOut() {
+    currentZoom = Math.max(currentZoom - 0.15, 0.2);
+    canvas.zoom(currentZoom);
+  }
 
-        canvas = viewer.get('canvas');
+  function resetZoom() {
+    currentZoom = 1;
+    canvas.zoom(currentZoom);
+  }
 
-        canvas.zoom(currentZoom);
-        canvas.scroll({ dx: -180, dy: -60 });
+  function fitView() {
+    canvas.zoom('fit-viewport');
+  }
 
-        setupStickyLanes();
-        setupTaskTooltips();
-      })
-      .catch(error => {
-        console.error('BPMN load error:', error);
-        document.body.innerHTML = 'Nie udało się załadować diagramu BPMN.';
+  function setupStickyLanes() {
+    const elementRegistry = viewer.get('elementRegistry');
+    const eventBus = viewer.get('eventBus');
+    const sticky = document.getElementById('stickyLanes');
+
+    function render() {
+      sticky.innerHTML = '';
+
+      const viewbox = canvas.viewbox();
+
+      const lanes = elementRegistry.filter(el => {
+        const bo = el.businessObject;
+        return bo && (
+          bo.$type === 'bpmn:Lane' ||
+          bo.$type === 'bpmn:Participant'
+        );
       });
 
-    function zoomIn() {
-      currentZoom = Math.min(currentZoom + 0.15, 3);
-      canvas.zoom(currentZoom);
-    }
+      let shouldShowSticky = false;
 
-    function zoomOut() {
-      currentZoom = Math.max(currentZoom - 0.15, 0.2);
-      canvas.zoom(currentZoom);
-    }
+      lanes.forEach(lane => {
+        const name = lane.businessObject.name;
+        if (!name) return;
 
-    function resetZoom() {
-      currentZoom = 1;
-      canvas.zoom(currentZoom);
-    }
+        const originalVisible =
+          (lane.x - viewbox.x) * viewbox.scale >= 0;
 
-    function fitView() {
-      canvas.zoom('fit-viewport');
-    }
+        if (originalVisible) return;
 
-    function setupStickyLanes() {
-      const elementRegistry = viewer.get('elementRegistry');
-      const eventBus = viewer.get('eventBus');
-      const sticky = document.getElementById('stickyLanes');
+        shouldShowSticky = true;
 
-      function render() {
-        sticky.innerHTML = '';
+        const top = (lane.y - viewbox.y) * viewbox.scale;
+        const height = lane.height * viewbox.scale;
 
-        const viewbox = canvas.viewbox();
+        if (top + height < 0 || top > window.innerHeight) return;
 
-        const lanes = elementRegistry.filter(el => {
-          const bo = el.businessObject;
-          return bo && (bo.$type === 'bpmn:Lane' || bo.$type === 'bpmn:Participant');
-        });
+        const div = document.createElement('div');
+        div.className = 'sticky-lane-label';
+        div.innerText = name;
 
-        let shouldShowSticky = false;
+        div.style.top = top + 'px';
+        div.style.height = height + 'px';
 
-        lanes.forEach(lane => {
-          const name = lane.businessObject.name;
-          if (!name) return;
-
-          const originalLabelStillVisible = (lane.x - viewbox.x) * viewbox.scale >= 0;
-
-          if (originalLabelStillVisible) {
-            return;
-          }
-
-          shouldShowSticky = true;
-
-          const top = (lane.y - viewbox.y) * viewbox.scale;
-          const height = lane.height * viewbox.scale;
-
-          if (top + height < 0 || top > window.innerHeight) return;
-
-          const div = document.createElement('div');
-          div.className = 'sticky-lane-label';
-          div.innerText = name;
-
-          div.style.top = top + 'px';
-          div.style.height = height + 'px';
-
-          sticky.appendChild(div);
-        });
-
-        sticky.style.display = shouldShowSticky ? 'block' : 'none';
-      }
-
-      render();
-      eventBus.on('canvas.viewbox.changed', render);
-      window.addEventListener('resize', render);
-    }
-
-    function setupTaskTooltips() {
-      const eventBus = viewer.get('eventBus');
-      const tooltip = document.getElementById('taskTooltip');
-
-      const customDescriptions = {
-        /*
-          Tu możesz dopisać własne opisy po ID taska, np.:
-
-          "Activity_123abc": "Dokładna definicja tego kroku procesu.",
-          "Task_456xyz": "Tutaj opis co dokładnie robi ten task."
-        */
-      };
-
-      function isTask(element) {
-        const bo = element.businessObject;
-        if (!bo) return false;
-
-        return [
-          'bpmn:Task',
-          'bpmn:UserTask',
-          'bpmn:ServiceTask',
-          'bpmn:ManualTask',
-          'bpmn:ScriptTask',
-          'bpmn:BusinessRuleTask',
-          'bpmn:SendTask',
-          'bpmn:ReceiveTask',
-          'bpmn:CallActivity',
-          'bpmn:SubProcess'
-        ].includes(bo.$type);
-      }
-
-      function getDocumentation(bo) {
-        if (!bo.documentation || !bo.documentation.length) return '';
-        return bo.documentation
-          .map(doc => doc.text || '')
-          .filter(Boolean)
-          .join('<br>');
-      }
-
-      eventBus.on('element.hover', event => {
-        const element = event.element;
-        if (!isTask(element)) return;
-
-        const bo = element.businessObject;
-        const title = bo.name || 'Task bez nazwy';
-        const description =
-          customDescriptions[bo.id] ||
-          getDocumentation(bo) ||
-          'Brak dodatkowego opisu dla tego taska. Możesz dodać opis w BPMN jako documentation albo w customDescriptions w viewer.html.';
-
-        tooltip.innerHTML = `
-          <strong>${escapeHtml(title)}</strong>
-          <div>${escapeHtml(description)}</div>
-          <div class="muted">ID: ${escapeHtml(bo.id)}</div>
-        `;
-
-        tooltip.style.display = 'block';
+        sticky.appendChild(div);
       });
 
-      eventBus.on('element.out', () => {
+      sticky.style.display = shouldShowSticky ? 'block' : 'none';
+    }
+
+    render();
+
+    eventBus.on('canvas.viewbox.changed', render);
+    window.addEventListener('resize', render);
+  }
+
+  function setupTaskTooltips() {
+    const eventBus = viewer.get('eventBus');
+    const tooltip = document.getElementById('taskTooltip');
+
+    const customDescriptions = {
+      /*
+      "Activity_123abc": "Opis taska"
+      */
+    };
+
+    function isTask(element) {
+      const bo = element.businessObject;
+      if (!bo) return false;
+
+      return [
+        'bpmn:Task',
+        'bpmn:UserTask',
+        'bpmn:ServiceTask',
+        'bpmn:ManualTask',
+        'bpmn:ScriptTask',
+        'bpmn:BusinessRuleTask',
+        'bpmn:SendTask',
+        'bpmn:ReceiveTask',
+        'bpmn:CallActivity',
+        'bpmn:SubProcess'
+      ].includes(bo.$type);
+    }
+
+    function getDocumentation(bo) {
+      if (!bo.documentation || !bo.documentation.length) {
+        return '';
+      }
+
+      return bo.documentation
+        .map(doc => doc.text || '')
+        .filter(Boolean)
+        .join('<br>');
+    }
+
+    eventBus.on('element.hover', event => {
+      const element = event.element;
+
+      if (!isTask(element)) return;
+
+      const bo = element.businessObject;
+
+      const title = bo.name || '';
+      const description =
+        customDescriptions[bo.id] ||
+        getDocumentation(bo);
+
+      if (!description || !description.trim()) {
         tooltip.style.display = 'none';
-      });
+        return;
+      }
 
-      document.addEventListener('mousemove', event => {
-        if (tooltip.style.display !== 'block') return;
+      tooltip.innerHTML = `
+        <strong>${escapeHtml(title)}</strong>
+        <div>${escapeHtml(description)}</div>
+      `;
 
-        const offset = 14;
-        const tooltipWidth = tooltip.offsetWidth || 320;
-        const tooltipHeight = tooltip.offsetHeight || 120;
+      tooltip.style.display = 'block';
+    });
 
-        let left = event.clientX + offset;
-        let top = event.clientY + offset;
+    eventBus.on('element.out', () => {
+      tooltip.style.display = 'none';
+    });
 
-        if (left + tooltipWidth > window.innerWidth) {
-          left = event.clientX - tooltipWidth - offset;
-        }
+    document.addEventListener('mousemove', event => {
+      if (tooltip.style.display !== 'block') return;
 
-        if (top + tooltipHeight > window.innerHeight) {
-          top = event.clientY - tooltipHeight - offset;
-        }
+      const offset = 14;
 
-        tooltip.style.left = left + 'px';
-        tooltip.style.top = top + 'px';
-      });
-    }
+      let left = event.clientX + offset;
+      let top = event.clientY + offset;
 
-    function escapeHtml(value) {
-      return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-  </script>
+      const tooltipWidth = tooltip.offsetWidth;
+      const tooltipHeight = tooltip.offsetHeight;
+
+      if (left + tooltipWidth > window.innerWidth) {
+        left = event.clientX - tooltipWidth - offset;
+      }
+
+      if (top + tooltipHeight > window.innerHeight) {
+        top = event.clientY - tooltipHeight - offset;
+      }
+
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+    });
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+</script>
+
 </body>
 </html>
