@@ -71,6 +71,10 @@
       filter: drop-shadow(0 0 6px rgba(0,115,234,.4));
     }
 
+    .clickable-task .djs-visual > :first-child {
+      stroke: #00c875 !important;
+    }
+
     .bjs-powered-by {
       display: none !important;
     }
@@ -158,6 +162,13 @@
       color: #fff;
       font-size: 14px;
     }
+
+    .task-tooltip .click-hint {
+      margin-top: 8px;
+      color: #00c875;
+      font-size: 11px;
+      font-weight: 700;
+    }
   </style>
 </head>
 
@@ -204,7 +215,7 @@
       canvas.scroll({ dx: -180, dy: -60 });
 
       setupStickyLanes();
-      setupTaskTooltips();
+      setupTaskTooltipsAndLinks();
     })
     .catch(error => {
       console.error(error);
@@ -284,15 +295,10 @@
     window.addEventListener('resize', render);
   }
 
-  function setupTaskTooltips() {
+  function setupTaskTooltipsAndLinks() {
     const eventBus = viewer.get('eventBus');
     const tooltip = document.getElementById('taskTooltip');
-
-    const customDescriptions = {
-      /*
-      "Activity_123abc": "Opis taska"
-      */
-    };
+    const elementRegistry = viewer.get('elementRegistry');
 
     function isTask(element) {
       const bo = element.businessObject;
@@ -323,21 +329,64 @@
         .join('\n');
     }
 
+    function extractUrl(text) {
+      const match = text.match(/(?:URL|Link):\s*(https?:\/\/[^\s]+)/i);
+      return match ? match[1] : '';
+    }
+
+    function removeUrlFromText(text) {
+      return text
+        .replace(/(?:URL|Link):\s*https?:\/\/[^\s]+/gi, '')
+        .trim();
+    }
+
+    function prepareClickableTasks() {
+      const elements = elementRegistry.filter(isTask);
+
+      elements.forEach(element => {
+        const bo = element.businessObject;
+        const rawDocumentation = getDocumentation(bo);
+        const url = extractUrl(rawDocumentation);
+        const gfx = elementRegistry.getGraphics(element);
+
+        if (gfx && url) {
+          gfx.classList.add('clickable-task');
+          gfx.style.cursor = 'pointer';
+        }
+      });
+    }
+
+    prepareClickableTasks();
+
+    eventBus.on('element.click', event => {
+      const element = event.element;
+
+      if (!isTask(element)) return;
+
+      const bo = element.businessObject;
+      const rawDocumentation = getDocumentation(bo);
+      const url = extractUrl(rawDocumentation);
+
+      if (url) {
+        window.location.href = url;
+      }
+    });
+
     eventBus.on('element.hover', event => {
       const element = event.element;
 
       if (!isTask(element)) return;
 
       const bo = element.businessObject;
-
       const title = bo.name || '';
-      const description =
-        customDescriptions[bo.id] ||
-        getDocumentation(bo);
+      const rawDocumentation = getDocumentation(bo);
+      const url = extractUrl(rawDocumentation);
+      const description = removeUrlFromText(rawDocumentation);
 
       if (!description || !description.trim()) {
         tooltip.innerHTML = `
           <strong>${escapeHtml(title)}</strong>
+          ${url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : ''}
         `;
 
         tooltip.style.display = 'block';
@@ -347,6 +396,7 @@
       tooltip.innerHTML = `
         <strong>${escapeHtml(title)}</strong>
         <div>${escapeHtml(description)}</div>
+        ${url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : ''}
       `;
 
       tooltip.style.display = 'block';
