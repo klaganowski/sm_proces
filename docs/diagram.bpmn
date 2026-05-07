@@ -48,7 +48,9 @@
       <bpmn:text>Nowe statusy w Kampaniio:
 - Do potwierdzenia (entry point)
 - Potwierdzone przez Twórcę
-- Zrzucone</bpmn:text>
+- Zrzucone
+
+ZAZNACZYC ZAKAZ KONKURENCJI</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_15w0pup">
       <bpmn:text>ewentualny proces negocjacji</bpmn:text>
@@ -97,6 +99,10 @@
 - przypiety komentarz
 - czy link dziala i sie zgadza</bpmn:text>
     </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1xcq6am">
+      <bpmn:text>zakaz konkurencji</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0z64tv4" associationDirection="None" sourceRef="Activity_1aegtd6" targetRef="TextAnnotation_1xcq6am" />
   </bpmn:collaboration>
   <bpmn:process id="Process_14k1axc" isExecutable="false">
     <bpmn:task id="Activity_0a06q3f" name="Pełne uzupełnienie danych kampanii w Mondayu">
@@ -160,7 +166,10 @@
     <bpmn:task id="Activity_1s6j0h2" name="Zapoznanie się z materiałami z Mondaya">
       <bpmn:outgoing>Flow_11dnuep</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_1hl9lfj" name="Przedstawia ofertę Twórcy (sprzedaje to twórcy)" />
+    <bpmn:task id="Activity_1hl9lfj" name="Przedstawia ofertę Twórcy (sprzedaje to twórcy)">
+      <bpmn:documentation>Gada z tworca
+BPMN: podproces-gadka.bpmn</bpmn:documentation>
+    </bpmn:task>
     <bpmn:task id="Activity_0qpndin" name="TL weryfikuje wycene i oznacza &#34;Gotowa&#34;">
       <bpmn:incoming>Flow_1vb02zv</bpmn:incoming>
     </bpmn:task>
@@ -335,8 +344,8 @@
         <di:waypoint x="1218" y="413" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0pg4fkf_di" bpmnElement="Association_0pg4fkf">
-        <di:waypoint x="1670" y="423" />
-        <di:waypoint x="1830" y="371" />
+        <di:waypoint x="1670" y="421" />
+        <di:waypoint x="1830" y="365" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0rwnlil_di" bpmnElement="Association_0rwnlil">
         <di:waypoint x="1660" y="400" />
@@ -633,16 +642,20 @@
         <di:waypoint x="7140" y="1220" />
         <di:waypoint x="7192" y="1220" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0z64tv4_di" bpmnElement="Association_0z64tv4">
+        <di:waypoint x="688" y="160" />
+        <di:waypoint x="726" y="120" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_0ponnit_di" bpmnElement="TextAnnotation_0ponnit">
         <dc:Bounds x="1095" y="360" width="245" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_17oges5_di" bpmnElement="TextAnnotation_17oges5">
-        <dc:Bounds x="1830" y="340" width="343" height="69" />
+        <dc:Bounds x="1830" y="340" width="342.99089068825907" height="98.51551956815115" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_15w0pup_di" bpmnElement="TextAnnotation_15w0pup">
-        <dc:Bounds x="2070" y="1290" width="164.99927622654437" height="40.991358917626215" />
+        <dc:Bounds x="2070" y="1290" width="165" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0p034oe_di" bpmnElement="TextAnnotation_0p034oe">
@@ -903,6 +916,10 @@
         <di:waypoint x="6960" y="1220" />
         <di:waypoint x="7040" y="1220" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1xcq6am_di" bpmnElement="TextAnnotation_1xcq6am">
+        <dc:Bounds x="700" y="80" width="99.99156545209178" height="40.48582995951417" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
