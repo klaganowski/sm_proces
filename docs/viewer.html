@@ -124,8 +124,7 @@
       width: 24px;
       z-index: 999;
       pointer-events: none;
-      background: #25283a;
-      border-right: 1px solid #565d80;
+      background: transparent;
       display: none;
     }
 
@@ -137,19 +136,21 @@
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 10px;
-      font-weight: 700;
+      font-weight: 800;
       writing-mode: vertical-rl;
       transform: rotate(180deg);
-      border-bottom: 1px solid rgba(143,150,184,0.4);
       box-sizing: border-box;
       overflow: hidden;
+      background: rgba(37,40,58,0.96);
+      border-right: 1px solid #565d80;
+      border-top: 1px solid rgba(143,150,184,0.45);
+      border-bottom: 1px solid rgba(143,150,184,0.45);
     }
 
     .task-tooltip {
       position: fixed;
       display: none;
-      max-width: 340px;
+      max-width: 360px;
       z-index: 2000;
       pointer-events: none;
       background: rgba(31,35,52,.97);
@@ -160,15 +161,20 @@
       box-shadow: 0 12px 32px rgba(0,0,0,.36);
       font-family: Arial, sans-serif;
       font-size: 13px;
-      line-height: 1.5;
-      white-space: pre-line;
+      line-height: 1.45;
     }
 
     .task-tooltip strong {
       display: block;
-      margin-bottom: 8px;
+      margin: 0 0 8px 0;
       color: #fff;
       font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .task-tooltip .description {
+      white-space: pre-line;
+      margin: 0;
     }
 
     .task-tooltip .click-hint {
@@ -274,44 +280,47 @@
       sticky.innerHTML = '';
 
       const viewbox = canvas.viewbox();
+      let visibleLabelsCount = 0;
 
       const lanes = elementRegistry.filter(el => {
         const bo = el.businessObject;
-        return bo && (
-          bo.$type === 'bpmn:Lane' ||
-          bo.$type === 'bpmn:Participant'
-        );
+        return bo && bo.$type === 'bpmn:Lane';
       });
-
-      let shouldShowSticky = false;
 
       lanes.forEach(lane => {
         const name = lane.businessObject.name;
         if (!name) return;
 
-        const originalVisible =
-          (lane.x - viewbox.x) * viewbox.scale >= 0;
+        const originalLeftOnScreen = (lane.x - viewbox.x) * viewbox.scale;
 
-        if (originalVisible) return;
-
-        shouldShowSticky = true;
+        if (originalLeftOnScreen >= 0) return;
 
         const top = (lane.y - viewbox.y) * viewbox.scale;
         const height = lane.height * viewbox.scale;
 
         if (top + height < 0 || top > window.innerHeight) return;
 
+        const visibleTop = Math.max(0, top);
+        const visibleBottom = Math.min(window.innerHeight, top + height);
+        const visibleHeight = visibleBottom - visibleTop;
+
+        if (visibleHeight < 24) return;
+
         const div = document.createElement('div');
         div.className = 'sticky-lane-label';
         div.innerText = name;
 
-        div.style.top = top + 'px';
-        div.style.height = height + 'px';
+        div.style.top = visibleTop + 'px';
+        div.style.height = visibleHeight + 'px';
+
+        const fontSize = Math.max(9, Math.min(16, 10 * viewbox.scale));
+        div.style.fontSize = fontSize + 'px';
 
         sticky.appendChild(div);
+        visibleLabelsCount++;
       });
 
-      sticky.style.display = shouldShowSticky ? 'block' : 'none';
+      sticky.style.display = visibleLabelsCount > 0 ? 'block' : 'none';
     }
 
     render();
@@ -414,20 +423,18 @@
       const description = removeUrlFromText(rawDocumentation);
 
       if (!description || !description.trim()) {
-        tooltip.innerHTML = `
-          <strong>${escapeHtml(title)}</strong>
-          ${url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : ''}
-        `;
+        tooltip.innerHTML =
+          '<strong>' + escapeHtml(title) + '</strong>' +
+          (url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : '');
 
         tooltip.style.display = 'block';
         return;
       }
 
-      tooltip.innerHTML = `
-        <strong>${escapeHtml(title)}</strong>
-        <div>${escapeHtml(description)}</div>
-        ${url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : ''}
-      `;
+      tooltip.innerHTML =
+        '<strong>' + escapeHtml(title) + '</strong>' +
+        '<div class="description">' + escapeHtml(description) + '</div>' +
+        (url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : '');
 
       tooltip.style.display = 'block';
     });
