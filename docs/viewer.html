@@ -84,6 +84,11 @@
       stroke-width: 2.5px !important;
     }
 
+    .bpmn-drilldown-task .djs-visual > :first-child {
+      stroke: #a855f7 !important;
+      stroke-width: 2.5px !important;
+    }
+
     .bjs-powered-by {
       display: none !important;
     }
@@ -102,7 +107,8 @@
       border: 1px solid #565d80;
     }
 
-    .controls button {
+    .controls button,
+    .back-button {
       border: 1px solid #666f99;
       background: #323750;
       color: #fff;
@@ -110,11 +116,25 @@
       border-radius: 7px;
       cursor: pointer;
       font-weight: 600;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
     }
 
-    .controls button:hover {
+    .controls button:hover,
+    .back-button:hover {
       background: #0073ea;
       border-color: #0073ea;
+    }
+
+    .back-button {
+      position: fixed;
+      left: 12px;
+      top: 12px;
+      z-index: 1200;
+      display: none;
+      background: rgba(41,45,69,0.94);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.28);
     }
 
     .sticky-lanes {
@@ -186,6 +206,13 @@
       font-size: 11px;
       font-weight: 700;
     }
+
+    .task-tooltip .bpmn-hint {
+      margin-top: 8px;
+      color: #c084fc;
+      font-size: 11px;
+      font-weight: 700;
+    }
   </style>
 </head>
 
@@ -194,6 +221,8 @@
 <div id="canvas"></div>
 <div id="stickyLanes" class="sticky-lanes"></div>
 <div id="taskTooltip" class="task-tooltip"></div>
+
+<button id="backButton" class="back-button" onclick="goBackToMain()">← Wstecz</button>
 
 <div class="controls">
   <button onclick="zoomOut()">−</button>
@@ -205,6 +234,8 @@
 <script src="https://unpkg.com/bpmn-js/dist/bpmn-navigated-viewer.development.js"></script>
 
 <script>
+  const MAIN_BPMN_FILE = 'diagram.bpmn';
+
   const viewer = new BpmnJS({
     container: '#canvas',
     zoomScroll: {
@@ -215,29 +246,57 @@
 
   let canvas;
   let currentZoom = 0.75;
+  let currentBpmnFile = MAIN_BPMN_FILE;
+  let initializedInteractions = false;
 
-  fetch('./diagram.bpmn')
-    .then(response => {
+  fetchAndLoadBpmn(MAIN_BPMN_FILE, false);
+
+  async function fetchAndLoadBpmn(fileName, isSubprocess) {
+    try {
+      hideTooltip();
+      clearStickyLanes();
+
+      const response = await fetch('./' + fileName);
+
       if (!response.ok) {
-        throw new Error('Nie znaleziono diagram.bpmn');
+        throw new Error('Nie znaleziono pliku BPMN: ' + fileName);
       }
-      return response.text();
-    })
-    .then(async xml => {
+
+      const xml = await response.text();
+
       await viewer.importXML(xml);
 
       canvas = viewer.get('canvas');
 
+      currentBpmnFile = fileName;
+      currentZoom = 0.75;
+
       canvas.zoom(currentZoom);
       canvas.scroll({ dx: -180, dy: -60 });
 
+      clearElementState();
       colorizeLanes();
-      setupStickyLanes();
-      setupTaskTooltipsAndLinks();
-    })
-    .catch(error => {
+      prepareClickableElements();
+
+      document.getElementById('backButton').style.display =
+        isSubprocess ? 'block' : 'none';
+
+      if (!initializedInteractions) {
+        setupStickyLanes();
+        setupTaskTooltipsAndLinks();
+        initializedInteractions = true;
+      } else {
+        renderStickyLanes();
+      }
+
+    } catch (error) {
       console.error(error);
-    });
+    }
+  }
+
+  function goBackToMain() {
+    fetchAndLoadBpmn(MAIN_BPMN_FILE, false);
+  }
 
   function zoomIn() {
     currentZoom = Math.min(currentZoom + 0.15, 3);
@@ -256,6 +315,40 @@
 
   function fitView() {
     canvas.zoom('fit-viewport');
+  }
+
+  function clearStickyLanes() {
+    const sticky = document.getElementById('stickyLanes');
+    sticky.innerHTML = '';
+    sticky.style.display = 'none';
+  }
+
+  function hideTooltip() {
+    const tooltip = document.getElementById('taskTooltip');
+    tooltip.style.display = 'none';
+  }
+
+  function clearElementState() {
+    const elementRegistry = viewer.get('elementRegistry');
+
+    elementRegistry.forEach(element => {
+      const gfx = elementRegistry.getGraphics(element);
+      if (!gfx) return;
+
+      gfx.classList.remove(
+        'lane-color-0',
+        'lane-color-1',
+        'lane-color-2',
+        'lane-color-3',
+        'lane-color-4',
+        'lane-color-5',
+        'lane-color-6',
+        'clickable-task',
+        'bpmn-drilldown-task'
+      );
+
+      gfx.style.cursor = '';
+    });
   }
 
   function colorizeLanes() {
@@ -277,139 +370,148 @@
     });
   }
 
-  function setupStickyLanes() {
-    const elementRegistry = viewer.get('elementRegistry');
-    const eventBus = viewer.get('eventBus');
-    const sticky = document.getElementById('stickyLanes');
+  function isTask(element) {
+    const bo = element.businessObject;
+    if (!bo) return false;
 
-    function render() {
-      sticky.innerHTML = '';
+    return [
+      'bpmn:Task',
+      'bpmn:UserTask',
+      'bpmn:ServiceTask',
+      'bpmn:ManualTask',
+      'bpmn:ScriptTask',
+      'bpmn:BusinessRuleTask',
+      'bpmn:SendTask',
+      'bpmn:ReceiveTask',
+      'bpmn:CallActivity',
+      'bpmn:SubProcess'
+    ].includes(bo.$type);
+  }
 
-      const viewbox = canvas.viewbox();
-      let visibleLabelsCount = 0;
-
-      const lanes = elementRegistry.filter(el => {
-        const bo = el.businessObject;
-        return bo && (
-          bo.$type === 'bpmn:Lane' ||
-          bo.$type === 'bpmn:Participant'
-        );
-      });
-
-      lanes.forEach(lane => {
-        const name = lane.businessObject.name;
-        if (!name) return;
-
-        const left = (lane.x - viewbox.x) * viewbox.scale;
-        const top = (lane.y - viewbox.y) * viewbox.scale;
-        const height = lane.height * viewbox.scale;
-
-        const visibleTop = Math.max(0, top);
-        const visibleBottom = Math.min(window.innerHeight, top + height);
-        const visibleHeight = visibleBottom - visibleTop;
-
-        if (visibleHeight < 24) return;
-
-        /*
-          Pojawia się dopiero wtedy, gdy oryginalna kolumna nazw basenów
-          faktycznie zniknie poza lewą krawędzią widoku.
-        */
-        if (left > -8) return;
-
-        const width = Math.max(22, Math.min(52, 26 * viewbox.scale));
-        const fontSize = Math.max(9, Math.min(18, 11 * viewbox.scale));
-
-        const div = document.createElement('div');
-        div.className = 'sticky-lane-label';
-        div.innerText = name;
-
-        div.style.top = visibleTop + 'px';
-        div.style.height = visibleHeight + 'px';
-        div.style.width = width + 'px';
-        div.style.fontSize = fontSize + 'px';
-
-        sticky.style.width = width + 'px';
-
-        sticky.appendChild(div);
-        visibleLabelsCount++;
-      });
-
-      sticky.style.display = visibleLabelsCount > 0 ? 'block' : 'none';
+  function getDocumentation(bo) {
+    if (!bo.documentation || !bo.documentation.length) {
+      return '';
     }
 
-    render();
+    return bo.documentation
+      .map(doc => doc.text || '')
+      .filter(Boolean)
+      .join('\n')
+      .replace(/\r\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
 
-    eventBus.on('canvas.viewbox.changed', render);
-    window.addEventListener('resize', render);
+  function extractUrl(text) {
+    const match = text.match(/(?:URL|Link):\s*(https?:\/\/[^\s]+)/i);
+    return match ? match[1] : '';
+  }
+
+  function extractBpmnFile(text) {
+    const match = text.match(/(?:BPMN):\s*([^\s]+)/i);
+    return match ? match[1] : '';
+  }
+
+  function removeSpecialLinksFromText(text) {
+    return text
+      .replace(/(?:URL|Link):\s*https?:\/\/[^\s]+/gi, '')
+      .replace(/(?:BPMN):\s*[^\s]+/gi, '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
+
+  function prepareClickableElements() {
+    const elementRegistry = viewer.get('elementRegistry');
+    const elements = elementRegistry.filter(isTask);
+
+    elements.forEach(element => {
+      const bo = element.businessObject;
+      const rawDocumentation = getDocumentation(bo);
+      const url = extractUrl(rawDocumentation);
+      const bpmnFile = extractBpmnFile(rawDocumentation);
+      const gfx = elementRegistry.getGraphics(element);
+
+      if (!gfx) return;
+
+      if (bpmnFile) {
+        gfx.classList.add('bpmn-drilldown-task');
+        gfx.style.cursor = 'pointer';
+      } else if (url) {
+        gfx.classList.add('clickable-task');
+        gfx.style.cursor = 'pointer';
+      }
+    });
+  }
+
+  function setupStickyLanes() {
+    const eventBus = viewer.get('eventBus');
+
+    renderStickyLanes();
+
+    eventBus.on('canvas.viewbox.changed', renderStickyLanes);
+    window.addEventListener('resize', renderStickyLanes);
+  }
+
+  function renderStickyLanes() {
+    if (!canvas) return;
+
+    const elementRegistry = viewer.get('elementRegistry');
+    const sticky = document.getElementById('stickyLanes');
+
+    sticky.innerHTML = '';
+
+    const viewbox = canvas.viewbox();
+    let visibleLabelsCount = 0;
+
+    const lanes = elementRegistry.filter(el => {
+      const bo = el.businessObject;
+      return bo && (
+        bo.$type === 'bpmn:Lane' ||
+        bo.$type === 'bpmn:Participant'
+      );
+    });
+
+    lanes.forEach(lane => {
+      const name = lane.businessObject.name;
+      if (!name) return;
+
+      const left = (lane.x - viewbox.x) * viewbox.scale;
+      const top = (lane.y - viewbox.y) * viewbox.scale;
+      const height = lane.height * viewbox.scale;
+
+      const visibleTop = Math.max(0, top);
+      const visibleBottom = Math.min(window.innerHeight, top + height);
+      const visibleHeight = visibleBottom - visibleTop;
+
+      if (visibleHeight < 24) return;
+
+      if (left > -8) return;
+
+      const width = Math.max(22, Math.min(52, 26 * viewbox.scale));
+      const fontSize = Math.max(9, Math.min(18, 11 * viewbox.scale));
+
+      const div = document.createElement('div');
+      div.className = 'sticky-lane-label';
+      div.innerText = name;
+
+      div.style.top = visibleTop + 'px';
+      div.style.height = visibleHeight + 'px';
+      div.style.width = width + 'px';
+      div.style.fontSize = fontSize + 'px';
+
+      sticky.style.width = width + 'px';
+
+      sticky.appendChild(div);
+      visibleLabelsCount++;
+    });
+
+    sticky.style.display = visibleLabelsCount > 0 ? 'block' : 'none';
   }
 
   function setupTaskTooltipsAndLinks() {
     const eventBus = viewer.get('eventBus');
     const tooltip = document.getElementById('taskTooltip');
-    const elementRegistry = viewer.get('elementRegistry');
-
-    function isTask(element) {
-      const bo = element.businessObject;
-      if (!bo) return false;
-
-      return [
-        'bpmn:Task',
-        'bpmn:UserTask',
-        'bpmn:ServiceTask',
-        'bpmn:ManualTask',
-        'bpmn:ScriptTask',
-        'bpmn:BusinessRuleTask',
-        'bpmn:SendTask',
-        'bpmn:ReceiveTask',
-        'bpmn:CallActivity',
-        'bpmn:SubProcess'
-      ].includes(bo.$type);
-    }
-
-    function getDocumentation(bo) {
-      if (!bo.documentation || !bo.documentation.length) {
-        return '';
-      }
-
-      return bo.documentation
-        .map(doc => doc.text || '')
-        .filter(Boolean)
-        .join('\n')
-        .replace(/\r\n/g, '\n')
-        .replace(/\n{3,}/g, '\n\n')
-        .trim();
-    }
-
-    function extractUrl(text) {
-      const match = text.match(/(?:URL|Link):\s*(https?:\/\/[^\s]+)/i);
-      return match ? match[1] : '';
-    }
-
-    function removeUrlFromText(text) {
-      return text
-        .replace(/(?:URL|Link):\s*https?:\/\/[^\s]+/gi, '')
-        .replace(/\r\n/g, '\n')
-        .replace(/\n{3,}/g, '\n\n')
-        .trim();
-    }
-
-    function prepareClickableTasks() {
-      const elements = elementRegistry.filter(isTask);
-
-      elements.forEach(element => {
-        const bo = element.businessObject;
-        const rawDocumentation = getDocumentation(bo);
-        const url = extractUrl(rawDocumentation);
-        const gfx = elementRegistry.getGraphics(element);
-
-        if (gfx && url) {
-          gfx.classList.add('clickable-task');
-          gfx.style.cursor = 'pointer';
-        }
-      });
-    }
-
-    prepareClickableTasks();
 
     eventBus.on('element.click', event => {
       const element = event.element;
@@ -418,7 +520,14 @@
 
       const bo = element.businessObject;
       const rawDocumentation = getDocumentation(bo);
+
+      const bpmnFile = extractBpmnFile(rawDocumentation);
       const url = extractUrl(rawDocumentation);
+
+      if (bpmnFile) {
+        fetchAndLoadBpmn(bpmnFile, true);
+        return;
+      }
 
       if (url) {
         window.location.href = url;
@@ -433,13 +542,16 @@
       const bo = element.businessObject;
       const title = bo.name || '';
       const rawDocumentation = getDocumentation(bo);
+
+      const bpmnFile = extractBpmnFile(rawDocumentation);
       const url = extractUrl(rawDocumentation);
-      const description = removeUrlFromText(rawDocumentation);
+      const description = removeSpecialLinksFromText(rawDocumentation);
 
       if (!description || !description.trim()) {
         tooltip.innerHTML =
           '<strong>' + escapeHtml(title) + '</strong>' +
-          (url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : '');
+          (bpmnFile ? '<div class="bpmn-hint">Kliknij, aby wejść w podproces</div>' : '') +
+          (!bpmnFile && url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : '');
 
         tooltip.style.display = 'block';
         return;
@@ -448,7 +560,8 @@
       tooltip.innerHTML =
         '<strong>' + escapeHtml(title) + '</strong>' +
         '<div class="description">' + escapeHtml(description) + '</div>' +
-        (url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : '');
+        (bpmnFile ? '<div class="bpmn-hint">Kliknij, aby wejść w podproces</div>' : '') +
+        (!bpmnFile && url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : '');
 
       tooltip.style.display = 'block';
     });
