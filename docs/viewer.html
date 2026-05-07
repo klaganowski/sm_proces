@@ -275,10 +275,11 @@
   let currentZoom = 0.75;
   let currentBpmnFile = MAIN_BPMN_FILE;
   let initializedInteractions = false;
+  let savedMainViewbox = null;
 
-  fetchAndLoadBpmn(MAIN_BPMN_FILE, false);
+  fetchAndLoadBpmn(MAIN_BPMN_FILE, false, false);
 
-  async function fetchAndLoadBpmn(fileName, isSubprocess) {
+  async function fetchAndLoadBpmn(fileName, isSubprocess, restoreMainViewbox) {
     try {
       hideTooltip();
       clearStickyLanes();
@@ -294,15 +295,19 @@
       await viewer.importXML(xml);
 
       canvas = viewer.get('canvas');
-
       currentBpmnFile = fileName;
 
-      if (isSubprocess) {
+      if (restoreMainViewbox && savedMainViewbox) {
+        canvas.viewbox(savedMainViewbox);
+        currentZoom = savedMainViewbox.scale || currentZoom;
+      } else if (isSubprocess) {
         canvas.zoom('fit-viewport', 'auto');
+        currentZoom = canvas.viewbox().scale;
       } else {
         currentZoom = 0.75;
         canvas.zoom(currentZoom);
         canvas.scroll({ dx: -180, dy: -60 });
+        savedMainViewbox = canvas.viewbox();
       }
 
       clearElementState();
@@ -326,16 +331,16 @@
   }
 
   function goBackToMain() {
-    fetchAndLoadBpmn(MAIN_BPMN_FILE, false);
+    fetchAndLoadBpmn(MAIN_BPMN_FILE, false, true);
   }
 
   function zoomIn() {
-    currentZoom = Math.min(currentZoom + 0.15, 3);
+    currentZoom = Math.min((canvas.viewbox().scale || currentZoom) + 0.15, 3);
     canvas.zoom(currentZoom);
   }
 
   function zoomOut() {
-    currentZoom = Math.max(currentZoom - 0.15, 0.2);
+    currentZoom = Math.max((canvas.viewbox().scale || currentZoom) - 0.15, 0.2);
     canvas.zoom(currentZoom);
   }
 
@@ -346,6 +351,7 @@
 
   function fitView() {
     canvas.zoom('fit-viewport');
+    currentZoom = canvas.viewbox().scale;
   }
 
   function clearStickyLanes() {
@@ -516,7 +522,6 @@
       const visibleHeight = visibleBottom - visibleTop;
 
       if (visibleHeight < 24) return;
-
       if (left > -8) return;
 
       const width = Math.max(22, Math.min(52, 26 * viewbox.scale));
@@ -556,7 +561,11 @@
       const url = extractUrl(rawDocumentation);
 
       if (bpmnFile) {
-        fetchAndLoadBpmn(bpmnFile, true);
+        if (currentBpmnFile === MAIN_BPMN_FILE && canvas) {
+          savedMainViewbox = canvas.viewbox();
+        }
+
+        fetchAndLoadBpmn(bpmnFile, true, false);
         return;
       }
 
