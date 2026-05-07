@@ -277,6 +277,12 @@
   let initializedInteractions = false;
   let savedMainViewbox = null;
 
+  // Stała mapa: nazwa basenu/lane -> numer koloru.
+  // Dzięki temu ta sama nazwa w głównym procesie i podprocesie dostaje ten sam kolor.
+  const laneColorByName = {};
+  let nextLaneColorIndex = 0;
+  const laneColorCount = 7;
+
   fetchAndLoadBpmn(MAIN_BPMN_FILE, false, false);
 
   async function fetchAndLoadBpmn(fileName, isSubprocess, restoreMainViewbox) {
@@ -388,6 +394,23 @@
     });
   }
 
+  function getLaneColorIndexByName(name) {
+    const normalizedName = String(name || '').trim().toLowerCase();
+
+    if (!normalizedName) {
+      const fallbackIndex = nextLaneColorIndex % laneColorCount;
+      nextLaneColorIndex++;
+      return fallbackIndex;
+    }
+
+    if (laneColorByName[normalizedName] === undefined) {
+      laneColorByName[normalizedName] = nextLaneColorIndex % laneColorCount;
+      nextLaneColorIndex++;
+    }
+
+    return laneColorByName[normalizedName];
+  }
+
   function colorizeLanes() {
     const elementRegistry = viewer.get('elementRegistry');
 
@@ -399,11 +422,14 @@
       );
     });
 
-    lanesAndParticipants.forEach((el, index) => {
+    lanesAndParticipants.forEach(el => {
       const gfx = elementRegistry.getGraphics(el);
       if (!gfx) return;
 
-      gfx.classList.add('lane-color-' + (index % 7));
+      const name = el.businessObject.name || el.id || '';
+      const colorIndex = getLaneColorIndexByName(name);
+
+      gfx.classList.add('lane-color-' + colorIndex);
     });
   }
 
