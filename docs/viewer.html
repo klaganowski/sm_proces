@@ -31,7 +31,6 @@
       stroke-width: 1.6px !important;
     }
 
-    /* kolorowe baseny */
     .lane-color-0 .djs-visual rect { fill: #202b4f !important; }
     .lane-color-1 .djs-visual rect { fill: #253b38 !important; }
     .lane-color-2 .djs-visual rect { fill: #3b2d4f !important; }
@@ -40,7 +39,6 @@
     .lane-color-5 .djs-visual rect { fill: #24384d !important; }
     .lane-color-6 .djs-visual rect { fill: #3b2842 !important; }
 
-    /* taski */
     .djs-shape[data-element-id*="Activity"] .djs-visual rect,
     .djs-shape[data-element-id*="Task"] .djs-visual rect {
       fill: #262a3f !important;
@@ -49,7 +47,6 @@
       rx: 10px;
     }
 
-    /* tekst */
     text,
     tspan,
     .djs-label,
@@ -61,7 +58,6 @@
       text-shadow: none !important;
     }
 
-    /* linie */
     .djs-connection path {
       stroke: #b9c5ef !important;
       stroke-width: 1.8px !important;
@@ -73,7 +69,6 @@
       stroke: #b9c5ef !important;
     }
 
-    /* hover */
     .djs-element.hover .djs-outline,
     .djs-element.selected .djs-outline {
       stroke: #0073ea !important;
@@ -84,18 +79,15 @@
       filter: drop-shadow(0 0 8px rgba(0,115,234,.5));
     }
 
-    /* klikalne taski */
     .clickable-task .djs-visual > :first-child {
       stroke: #00c875 !important;
       stroke-width: 2.5px !important;
     }
 
-    /* ukrycie logo */
     .bjs-powered-by {
       display: none !important;
     }
 
-    /* kontrolki */
     .controls {
       position: fixed;
       right: 12px;
@@ -125,7 +117,6 @@
       border-color: #0073ea;
     }
 
-    /* sticky lane labels */
     .sticky-lanes {
       position: fixed;
       left: 0;
@@ -157,7 +148,6 @@
       letter-spacing: .3px;
     }
 
-    /* tooltip */
     .task-tooltip {
       position: fixed;
       display: none;
@@ -232,7 +222,6 @@
       return response.text();
     })
     .then(async xml => {
-
       await viewer.importXML(xml);
 
       canvas = viewer.get('canvas');
@@ -243,7 +232,6 @@
       colorizeLanes();
       setupStickyLanes();
       setupTaskTooltipsAndLinks();
-
     })
     .catch(error => {
       console.error(error);
@@ -269,111 +257,93 @@
   }
 
   function colorizeLanes() {
-
     const elementRegistry = viewer.get('elementRegistry');
 
-    const lanes = elementRegistry.filter(el => {
+    const lanesAndParticipants = elementRegistry.filter(el => {
       const bo = el.businessObject;
-      return bo && bo.$type === 'bpmn:Lane';
+      return bo && (
+        bo.$type === 'bpmn:Lane' ||
+        bo.$type === 'bpmn:Participant'
+      );
     });
 
-    lanes.forEach((lane, index) => {
-
-      const gfx = elementRegistry.getGraphics(lane);
-
+    lanesAndParticipants.forEach((el, index) => {
+      const gfx = elementRegistry.getGraphics(el);
       if (!gfx) return;
 
       gfx.classList.add('lane-color-' + (index % 7));
-
     });
   }
 
   function setupStickyLanes() {
-
     const elementRegistry = viewer.get('elementRegistry');
     const eventBus = viewer.get('eventBus');
     const sticky = document.getElementById('stickyLanes');
 
     function render() {
-
       sticky.innerHTML = '';
 
       const viewbox = canvas.viewbox();
-
       let visibleLabelsCount = 0;
 
       const lanes = elementRegistry.filter(el => {
         const bo = el.businessObject;
-        return bo && bo.$type === 'bpmn:Lane';
+        return bo && (
+          bo.$type === 'bpmn:Lane' ||
+          bo.$type === 'bpmn:Participant'
+        );
       });
 
       lanes.forEach(lane => {
-
         const name = lane.businessObject.name;
-
         if (!name) return;
 
-        const laneLeft = (lane.x - viewbox.x) * viewbox.scale;
-        const laneTop = (lane.y - viewbox.y) * viewbox.scale;
-        const laneHeight = lane.height * viewbox.scale;
+        const left = (lane.x - viewbox.x) * viewbox.scale;
+        const top = (lane.y - viewbox.y) * viewbox.scale;
+        const height = lane.height * viewbox.scale;
 
-        const visibleTop = Math.max(0, laneTop);
-        const visibleBottom = Math.min(window.innerHeight, laneTop + laneHeight);
+        const visibleTop = Math.max(0, top);
+        const visibleBottom = Math.min(window.innerHeight, top + height);
         const visibleHeight = visibleBottom - visibleTop;
 
         if (visibleHeight < 24) return;
 
-        // pokazuj sticky tylko gdy oryginalna nazwa wyleci poza ekran
-        if (laneLeft > 26) return;
+        /*
+          Pokazuj sticky label, gdy oryginalna lewa część basenu/lane
+          uciekła poza widok albo jest bardzo blisko lewej krawędzi.
+        */
+        if (left > 160) return;
 
         const div = document.createElement('div');
-
         div.className = 'sticky-lane-label';
         div.innerText = name;
 
         div.style.top = visibleTop + 'px';
         div.style.height = visibleHeight + 'px';
 
-        // font skaluje się z zoomem
-        const fontSize = Math.max(
-          9,
-          Math.min(
-            18,
-            11 * viewbox.scale
-          )
-        );
-
+        const fontSize = Math.max(9, Math.min(18, 11 * viewbox.scale));
         div.style.fontSize = fontSize + 'px';
 
         sticky.appendChild(div);
-
         visibleLabelsCount++;
-
       });
 
-      sticky.style.display =
-        visibleLabelsCount > 0
-          ? 'block'
-          : 'none';
+      sticky.style.display = visibleLabelsCount > 0 ? 'block' : 'none';
     }
 
     render();
 
     eventBus.on('canvas.viewbox.changed', render);
-
     window.addEventListener('resize', render);
   }
 
   function setupTaskTooltipsAndLinks() {
-
     const eventBus = viewer.get('eventBus');
     const tooltip = document.getElementById('taskTooltip');
     const elementRegistry = viewer.get('elementRegistry');
 
     function isTask(element) {
-
       const bo = element.businessObject;
-
       if (!bo) return false;
 
       return [
@@ -391,7 +361,6 @@
     }
 
     function getDocumentation(bo) {
-
       if (!bo.documentation || !bo.documentation.length) {
         return '';
       }
@@ -406,17 +375,11 @@
     }
 
     function extractUrl(text) {
-
-      const match =
-        text.match(/(?:URL|Link):\s*(https?:\/\/[^\s]+)/i);
-
-      return match
-        ? match[1]
-        : '';
+      const match = text.match(/(?:URL|Link):\s*(https?:\/\/[^\s]+)/i);
+      return match ? match[1] : '';
     }
 
     function removeUrlFromText(text) {
-
       return text
         .replace(/(?:URL|Link):\s*https?:\/\/[^\s]+/gi, '')
         .replace(/\r\n/g, '\n')
@@ -425,27 +388,16 @@
     }
 
     function prepareClickableTasks() {
-
-      const elements =
-        elementRegistry.filter(isTask);
+      const elements = elementRegistry.filter(isTask);
 
       elements.forEach(element => {
-
         const bo = element.businessObject;
-
-        const rawDocumentation =
-          getDocumentation(bo);
-
-        const url =
-          extractUrl(rawDocumentation);
-
-        const gfx =
-          elementRegistry.getGraphics(element);
+        const rawDocumentation = getDocumentation(bo);
+        const url = extractUrl(rawDocumentation);
+        const gfx = elementRegistry.getGraphics(element);
 
         if (gfx && url) {
-
           gfx.classList.add('clickable-task');
-
           gfx.style.cursor = 'pointer';
         }
       });
@@ -454,18 +406,13 @@
     prepareClickableTasks();
 
     eventBus.on('element.click', event => {
-
       const element = event.element;
 
       if (!isTask(element)) return;
 
       const bo = element.businessObject;
-
-      const rawDocumentation =
-        getDocumentation(bo);
-
-      const url =
-        extractUrl(rawDocumentation);
+      const rawDocumentation = getDocumentation(bo);
+      const url = extractUrl(rawDocumentation);
 
       if (url) {
         window.location.href = url;
@@ -473,45 +420,29 @@
     });
 
     eventBus.on('element.hover', event => {
-
       const element = event.element;
 
       if (!isTask(element)) return;
 
       const bo = element.businessObject;
-
       const title = bo.name || '';
-
-      const rawDocumentation =
-        getDocumentation(bo);
-
-      const url =
-        extractUrl(rawDocumentation);
-
-      const description =
-        removeUrlFromText(rawDocumentation);
+      const rawDocumentation = getDocumentation(bo);
+      const url = extractUrl(rawDocumentation);
+      const description = removeUrlFromText(rawDocumentation);
 
       if (!description || !description.trim()) {
-
         tooltip.innerHTML =
           '<strong>' + escapeHtml(title) + '</strong>' +
-          (url
-            ? '<div class="click-hint">Kliknij, aby otworzyć</div>'
-            : '');
+          (url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : '');
 
         tooltip.style.display = 'block';
-
         return;
       }
 
       tooltip.innerHTML =
         '<strong>' + escapeHtml(title) + '</strong>' +
-        '<div class="description">' +
-          escapeHtml(description) +
-        '</div>' +
-        (url
-          ? '<div class="click-hint">Kliknij, aby otworzyć</div>'
-          : '');
+        '<div class="description">' + escapeHtml(description) + '</div>' +
+        (url ? '<div class="click-hint">Kliknij, aby otworzyć</div>' : '');
 
       tooltip.style.display = 'block';
     });
@@ -521,7 +452,6 @@
     });
 
     document.addEventListener('mousemove', event => {
-
       if (tooltip.style.display !== 'block') return;
 
       const offset = 14;
@@ -542,12 +472,10 @@
 
       tooltip.style.left = left + 'px';
       tooltip.style.top = top + 'px';
-
     });
   }
 
   function escapeHtml(value) {
-
     return String(value)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
