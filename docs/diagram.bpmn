@@ -41,28 +41,8 @@
     <bpmn:messageFlow id="Flow_09qhfyh" sourceRef="Activity_0x0q8ww" targetRef="Activity_0kc05c1" />
     <bpmn:messageFlow id="Flow_170r39o" sourceRef="Activity_058mcb4" targetRef="Activity_15982hy" />
     <bpmn:messageFlow id="Flow_1govqr0" sourceRef="Activity_1fooqpo" targetRef="Activity_10xi5h7" />
-    <bpmn:textAnnotation id="TextAnnotation_0ponnit">
-      <bpmn:text>zaznaczyc rekomendacje/zachecenia</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_17oges5">
-      <bpmn:text>Nowe statusy w Kampaniio:
-- Do potwierdzenia (entry point)
-- Potwierdzone przez Twórcę
-- Zrzucone
-
-ZAZNACZYC ZAKAZ KONKURENCJI</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_15w0pup">
-      <bpmn:text>ewentualny proces negocjacji</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_0p034oe">
-      <bpmn:text>ewentualny proces negocjacji</bpmn:text>
-    </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_0gkftq5">
       <bpmn:text>+ weryfikacja umowy</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_02aqr9h">
-      <bpmn:text>jest w tym deadline</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_17xt20t">
       <bpmn:text>wraz z kompletem informacji/uwag</bpmn:text>
@@ -70,14 +50,8 @@ ZAZNACZYC ZAKAZ KONKURENCJI</bpmn:text>
     <bpmn:textAnnotation id="TextAnnotation_0frzxcr">
       <bpmn:text>wraz z kompletem informacji/uwag</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_0x2g92j">
-      <bpmn:text>konkretna pelna informacja w przypadku braku</bpmn:text>
-    </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1gmrut3">
       <bpmn:text>potwierdza brak zastrzezen</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_00fzwxj">
-      <bpmn:text>z uwzglednieniem terminu</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_030wpc8">
       <bpmn:text>definicja dobrze opublikowanego</bpmn:text>
@@ -87,9 +61,6 @@ ZAZNACZYC ZAKAZ KONKURENCJI</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1951h9y">
       <bpmn:text>standard zbierania statystyk</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_1njn797">
-      <bpmn:text>sensowne update przy ofercie</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1mvt7py">
       <bpmn:text>poprawnie opublikowany:
@@ -166,17 +137,44 @@ ZAZNACZYC ZAKAZ KONKURENCJI</bpmn:text>
     <bpmn:task id="Activity_1s6j0h2" name="Zapoznanie się z materiałami z Mondaya">
       <bpmn:outgoing>Flow_11dnuep</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_1hl9lfj" name="Przedstawia ofertę Twórcy (sprzedaje to twórcy)">
-      <bpmn:documentation>Gada z tworca
-BPMN: podproces-gadka.bpmn</bpmn:documentation>
+    <bpmn:task id="Activity_1hl9lfj" name="Przedstawia ofertę Twórcy i zachęca go do udziału w kampanii">
+      <bpmn:documentation>Opiekun Twórcy kontaktuje się z Twórcą i przedstawia mu ofertę udziału w kampanii, która została już wstępnie zaakceptowana przez Klienta. Na tym etapie celem nie jest jedynie przekazanie informacji o zakresie współpracy i wynagrodzeniu, ale także aktywne zachęcenie Twórcy do przyjęcia kampanii.
+
+W ramach zadania Opiekun Twórcy:
+- przedstawia Twórcy podstawowe informacje o kampanii, marce, produkcie lub usłudze
+- informuje, że oferta została już wstępnie zaakceptowana przez Klienta
+- jasno komunikuje proponowany zakres świadczeń
+- przedstawia proponowane wynagrodzenie oraz warunki współpracy
+- wskazuje wymagania dodatkowe, np. zakaz konkurencji, usage rights, obowiązkowe komunikaty lub ograniczenia
+- jasno zaznacza termin realizacji kampanii oraz deadline na wykonanie poszczególnych działań
+- upewnia się, że Twórca rozumie zakres współpracy, oczekiwania Klienta i wymagane terminy
+- proaktywnie zachęca Twórcę do udziału w kampanii, pokazując atrakcyjność współpracy, dopasowanie marki do jego profilu lub potencjalne korzyści
+- odpowiada na pytania Twórcy i wyjaśnia ewentualne wątpliwości
+- zbiera decyzję Twórcy dotyczącą udziału w kampanii
+
+Opiekun Twórcy powinien traktować ten etap jako aktywne „sprzedanie” kampanii Twórcy, a nie wyłącznie techniczne przekazanie warunków. Ważne jest, aby komunikacja była konkretna, zachęcająca i jednocześnie jasno określała obowiązki, terminy oraz oczekiwania.
+BPMN: podproces-przedstawienie_oferty_tworcy.bpmn</bpmn:documentation>
     </bpmn:task>
     <bpmn:task id="Activity_0qpndin" name="TL weryfikuje wycene i oznacza &#34;Gotowa&#34;">
+      <bpmn:documentation>Team Leader:
+- sprawdza, czy wycena została uzupełniona dla wszystkich wskazanych Twórców
+- weryfikuje, czy stawki mieszczą się w standardowo stosowanych widełkach
+- sprawdza, czy zakres świadczeń odpowiada potrzebom Klienta
+- kontroluje, czy uwzględniono wszystkie wymagania dodatkowe, np. zakaz konkurencji, usage rights, terminy publikacji lub inne ograniczenia
+- weryfikuje, czy komentarze i rekomendacje są jasne oraz wystarczające dla Sprzedawcy/Klienta
+- w razie braków lub niejasności wraca z feedbackiem do Opiekunów Twórców i prosi o poprawki lub doprecyzowanie informacji
+
+Po zakończonej weryfikacji Team Leader oznacza wycenę statusem „Gotowa”. Jest to sygnałem dla Sprzedawcy, że wycena została sprawdzona, nie są planowane dalsze zmiany po stronie zespołu Talent Managementu  i można wykorzystać ją do przygotowania lub finalizacji oferty dla Klienta.</bpmn:documentation>
       <bpmn:incoming>Flow_1vb02zv</bpmn:incoming>
     </bpmn:task>
     <bpmn:task id="Activity_01cddkh" name="Wypełnia wycenę Twórców w Monday&#39;u">
-      <bpmn:documentation>- uzupełnia stawki oraz szczegóły współpracy dla wybranych Twórców,
-- w przypadku takiej potrzeby lub wcześniejszego ustalenia — weryfikuje wycenę bezpośrednio z Twórcą już na tym etapie procesu,
-- w uzasadnionych przypadkach dodaje rekomendacje dotyczące Twórcy, wyceny lub proponowanego sposobu realizacji współpracy</bpmn:documentation>
+      <bpmn:documentation>Opiekun Twórcy:
+- uzupełnia stawki za wymagane świadczenia,
+- sprawdza, czy proponowane stawki mieszczą się w standardowo stosowanych widełkach cenowych,
+- w razie potrzeby lub wcześniejszego ustalenia ze Sprzedawcą weryfikuje wycenę bezpośrednio z Twórcą już na tym etapie procesu,
+- w uzasadnionych przypadkach dodaje rekomendacje dotyczące Twórcy, wyceny lub proponowanego sposobu realizacji współpracy.
+
+Opiekun powinien uzupełnić wycenę możliwie jak najsprawniej, bez odkładania zadania na ostatni moment przed deadlinem. Pozwala to Sprzedawcy na spokojne przygotowanie kompletnej oferty, weryfikację założeń oraz ewentualne doprecyzowanie informacji przed wysłaniem propozycji do Klienta.</bpmn:documentation>
       <bpmn:outgoing>Flow_1vb02zv</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Activity_0towmlb" name="Weryfikuje czy materiał został poprawnie opublikowany">
@@ -195,7 +193,19 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
     <bpmn:task id="Activity_1fooqpo" name="Przekazuje Twórcy nr rozliczenia do FV">
       <bpmn:incoming>Flow_1osp56z</bpmn:incoming>
     </bpmn:task>
-    <bpmn:task id="Activity_0qmlcv0" name="Wraca z akceptacją/brakiem do Mondaya" />
+    <bpmn:task id="Activity_0qmlcv0" name="Wraca z akceptacją/jej brakiem do Monday’a">
+      <bpmn:documentation>Opiekun Twórcy aktualizuje status w Monday’u po przedstawieniu Twórcy konkretnej oferty udziału w kampanii. Informacja dotyczy oferty, która została wcześniej zaprezentowana Twórcy i wstępnie zaakceptowana przez Klienta.
+
+Opiekun Twórcy:
+- oznacza w Monday’u, czy Twórca zaakceptował przedstawioną ofertę
+jeśli Twórca zgłasza jakiekolwiek „ale”, warunki lub zastrzeżenia, Opiekun jasno zaznacza je w Monday’u
+- wskazuje, czy akceptacja jest pełna, czy warunkowa
+- w przypadku akceptacji warunkowej opisuje, czego dotyczy warunek, np. zmiany terminu, zakresu świadczeń, stawki, formy publikacji lub zapisów dotyczących zakazu konkurencji
+- w przypadku braku akceptacji oznacza odmowę udziału Twórcy w kampanii
+- przy braku akceptacji dodaje sensowne uzasadnienie w formie update’u na Monday’u
+- opisuje powód odmowy w sposób konkretny i użyteczny dla Sprzedawcy oraz dalszego procesu, np. brak dostępności, za niska stawka, niedopasowanie marki, konflikt z inną współpracą lub problem z terminem realizacji
+- aktualizuje status możliwie jak najszybciej po otrzymaniu odpowiedzi od Twórcy</bpmn:documentation>
+    </bpmn:task>
     <bpmn:sequenceFlow id="Flow_0nkbdok" sourceRef="Activity_1dhgm39" targetRef="Activity_0u8jcv2" />
     <bpmn:sequenceFlow id="Flow_1i556r9" name="materiał do poprawy" sourceRef="Activity_1dhgm39" targetRef="Activity_0uo4yum" />
     <bpmn:sequenceFlow id="Flow_0c48fqn" sourceRef="Activity_0fcsepo" targetRef="Activity_0uo4yum" />
@@ -206,32 +216,65 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
     <bpmn:sequenceFlow id="Flow_1osp56z" sourceRef="Activity_0x0q8ww" targetRef="Activity_1fooqpo" />
     <bpmn:association id="Association_1ju4i8x" associationDirection="None" sourceRef="Activity_0u8jcv2" targetRef="TextAnnotation_17xt20t" />
     <bpmn:association id="Association_0uxtwiy" associationDirection="None" sourceRef="Activity_1s6j0h2" targetRef="TextAnnotation_1gmrut3" />
-    <bpmn:association id="Association_11cuxwd" associationDirection="None" sourceRef="Activity_1hl9lfj" targetRef="TextAnnotation_00fzwxj" />
     <bpmn:association id="Association_1nv9dsj" associationDirection="None" sourceRef="Activity_0towmlb" targetRef="TextAnnotation_030wpc8" />
     <bpmn:association id="Association_1fruwai" associationDirection="None" sourceRef="Activity_0towmlb" targetRef="TextAnnotation_1mvt7py" />
     <bpmn:association id="Association_10ijzfi" associationDirection="None" sourceRef="Activity_0zjpphj" targetRef="TextAnnotation_1951h9y" />
-    <bpmn:association id="Association_1c2tk03" associationDirection="None" sourceRef="Activity_0qmlcv0" targetRef="TextAnnotation_0x2g92j" />
-    <bpmn:association id="Association_0wbmtu4" associationDirection="None" sourceRef="Activity_0qmlcv0" targetRef="TextAnnotation_1njn797" />
   </bpmn:process>
   <bpmn:process id="Process_1sec7kf" isExecutable="false">
     <bpmn:startEvent id="StartEvent_02zn40c" name="Jest kontakt z klientem">
       <bpmn:outgoing>Flow_0z87b3h</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:task id="Activity_1ykpzxg" name="Pozyskuje informacje o potrzebie klienta">
+      <bpmn:documentation>Sprzedawca, posiadający kontakt z klientem, pozyskuje od niego kluczowe informacje dotyczące potrzeby realizacji kampanii influencerskiej. Na tym etapie zbierane są podstawowe założenia projektu, niezbędne do przygotowania oferty oraz dalszego zaplanowania działań.
+W ramach rozmowy z klientem sprzedawca ustala m.in.:
+- planowany termin realizacji kampanii,
+- opis kampanii oraz promowanego produktu lub usługi,
+- główny cel kampanii,
+- zakładany budżet,
+- zakres świadczeń i działań, którymi klient jest zainteresowany.</bpmn:documentation>
       <bpmn:incoming>Flow_0z87b3h</bpmn:incoming>
     </bpmn:task>
     <bpmn:task id="Activity_1drgjwn" name="Tworzy i uzupełnia wycenę w Monday&#39;u">
-      <bpmn:documentation>W wycenie powinny znaleźć się:
-- podstawowe informacje o kampanii (Klient, Sprzedawca, deadline złożenia oferty, termin realizacji),
-- opis kampanii / produktu oraz oczekiwania Klienta,
+      <bpmn:documentation>W wycenie powinny znaleźć się w szczególności:
+- podstawowe informacje o kampanii: Klient, Sprzedawca, deadline złożenia oferty do Klienta oraz planowany termin realizacji kampanii,
+- opis kampanii, produktu lub usługi oraz oczekiwania Klienta,
+- cel kampanii,
 - budżet kampanii wraz z walutą rozliczenia,
-- informacje o poszukiwanych Twórcach oraz wymaganych świadczeniach,
-- wszystkie ograniczenia i wymagania dodatkowe (np. zakaz konkurencji),
-- dodatkowe informacje niezbędne do przygotowania kompletnej oferty.</bpmn:documentation>
+- zakres świadczeń, którymi Klient jest zainteresowany,
+- informacje o poszukiwanych Twórcach, np. kategoria, platforma, liczba Twórców, oczekiwany zasięg, profil - odbiorców,
+- informacje dotyczące zakazu konkurencji,
+- wszystkie ograniczenia i wymagania dodatkowe,
+- dodatkowe informacje niezbędne do przygotowania kompletnej i trafnej oferty.
+
+Sprzedawca powinien upewnić się, że deadline przygotowania wyceny jest realny i pozwala zespołowi na jakościowe opracowanie propozycji. Przyjmowany minimalny czas na przygotowanie oferty to 48 godzin od momentu dodania wyceny w Monday’u, chyba że sytuacja została wcześniej indywidualnie ustalona z zespołem.</bpmn:documentation>
     </bpmn:task>
-    <bpmn:task id="Activity_1qhc5ln" name="Weryfikuje wycene, obrabia Arkusz i wysyła do Klienta" />
-    <bpmn:task id="Activity_072kpvp" name="Dodanie tablicy do Mondaya" />
-    <bpmn:task id="Activity_0s2szsq" name="Wraca z info do klienta">
+    <bpmn:task id="Activity_1qhc5ln" name="Weryfikuje wycenę, finalizuje arkusz i wysyła do Klienta">
+      <bpmn:documentation>Sprzedawca weryfikuje wycenę oznaczoną jako „Gotowa”, przygotowuje finalną wersję arkusza ofertowego i wysyła ją do Klienta w odpowiednio opisanej, proaktywnej wiadomości.
+Sprzedawca:
+- sprawdza, czy wycena zawiera komplet informacji potrzebnych do przedstawienia oferty Klientowi
+- weryfikuje, czy uwzględniono właściwych Twórców, świadczenia, stawki, terminy oraz wymagania dodatkowe
+- sprawdza, czy w arkuszu nie ma braków, błędów, nieaktualnych danych lub informacji wewnętrznych, które nie powinny trafić do Klienta
+- w razie potrzeby ukrywa, usuwa lub porządkuje wybrane elementy arkusza
+- dodaje zmiany, komentarze lub doprecyzowania potrzebne do właściwego przedstawienia oferty Klientowi
+- upewnia się, że oferta jest czytelna, kompletna i zgodna z ustaleniami z Klientem
+- przygotowuje wiadomość do Klienta, w której krótko opisuje przesyłaną ofertę (nie wysyła samego linku do arkusza bez kontekstu)
+- może dodatkowo podkreślić rekomendację zespołu, np. najlepiej dopasowanego Twórcę, najkorzystniejszy pakiet świadczeń albo wariant zgodny z celem kampanii
+- wysyła przygotowany arkusz ofertowy do Klienta</bpmn:documentation>
+    </bpmn:task>
+    <bpmn:task id="Activity_072kpvp" name="Dodanie tablicy do Monday&#39;a">
+      <bpmn:documentation>Na tym etapie zaakceptowane są warunki po stronie Klienta, natomiast wyceny i udział poszczególnych Twórców wymagają jeszcze potwierdzenia po stronie Twórców.
+
+Sprzedawca:
+- zakłada tablicę kampanii w Monday’u zgodnie z przyjętym procesem
+- dodaje listę Twórców zaakceptowanych przez Klienta do dalszej weryfikacji
+- wpisuje zakres zaakceptowanych świadczeń
+- oznacza wymagania dodatkowe, np. zakaz konkurencji, usage rights, terminy publikacji lub inne ograniczenia
+- dodaje dodatkowe informacje potrzebne zespołowi do dalszej obsługi kampanii
+
+Szczególnie ważne jest, aby już na tym etapie w tablicy był jasno wskazany deadline oraz termin realizacji kampanii. Pozwala to odpowiednio zaplanować kontakt z Twórcami, potwierdzenie dostępności, przygotowanie materiałów oraz dalsze działania.
+BPMN: podproces-dodanie_tablicy.bpmn</bpmn:documentation>
+    </bpmn:task>
+    <bpmn:task id="Activity_0s2szsq" name="Wraca z informacją do klienta">
       <bpmn:outgoing>Flow_129c15o</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Activity_11lzdqy" name="Podpisanie umowy">
@@ -244,20 +287,24 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
     <bpmn:sequenceFlow id="Flow_0z87b3h" sourceRef="StartEvent_02zn40c" targetRef="Activity_1ykpzxg" />
     <bpmn:sequenceFlow id="Flow_129c15o" sourceRef="Activity_0s2szsq" targetRef="Activity_11lzdqy" />
     <bpmn:sequenceFlow id="Flow_1l338sy" sourceRef="Activity_11lzdqy" targetRef="Activity_0rjkyd9" />
-    <bpmn:association id="Association_0lx6u43" associationDirection="None" sourceRef="Activity_1qhc5ln" targetRef="TextAnnotation_0ponnit" />
-    <bpmn:association id="Association_0pg4fkf" associationDirection="None" sourceRef="Activity_072kpvp" targetRef="TextAnnotation_17oges5" />
-    <bpmn:association id="Association_0rwnlil" associationDirection="None" sourceRef="Activity_072kpvp" targetRef="TextAnnotation_02aqr9h" />
-    <bpmn:association id="Association_050v970" associationDirection="None" sourceRef="Activity_0s2szsq" targetRef="TextAnnotation_0p034oe" />
     <bpmn:association id="Association_1ov941t" associationDirection="None" sourceRef="Activity_11lzdqy" targetRef="TextAnnotation_0gkftq5" />
   </bpmn:process>
   <bpmn:process id="Process_1howy2u" isExecutable="false">
-    <bpmn:task id="Activity_1aegtd6" name="Przekazuje komplet informacji o kampanii" />
+    <bpmn:task id="Activity_1aegtd6" name="Przekazuje komplet informacji o kampanii">
+      <bpmn:documentation>Klient przekazuje w szczególności:
+- planowany termin realizacji kampanii,
+- opis kampanii oraz promowanego produktu lub usługi,
+- główny cel kampanii,
+- zakładany budżet,
+- zakres świadczeń i działań, którymi jest zainteresowany,
+- informacje dotyczące zakazu konkurencji oraz ewentualnych ograniczeń współpracy z innymi markami.</bpmn:documentation>
+    </bpmn:task>
     <bpmn:task id="Activity_05risj5" name="Wybiera Twórców z Wyceny" />
     <bpmn:task id="Activity_1jxwie2" name="Akceptacja/Odrzucenie materiału" />
     <bpmn:task id="Activity_172wrhn" name="Zgłasza ewentualne zastrzeżenia" />
   </bpmn:process>
   <bpmn:process id="Process_1k0h4q7" isExecutable="false">
-    <bpmn:task id="Activity_0q4i1w1" name="Odpowiada na oferte" />
+    <bpmn:task id="Activity_0q4i1w1" name="Odpowiada na ofertę" />
     <bpmn:task id="Activity_1r08zqz" name="Zapoznanie się ze wszystkimi informacjami i  rozpoczecie pracy nad materiałami">
       <bpmn:outgoing>Flow_1vxrnwj</bpmn:outgoing>
     </bpmn:task>
@@ -277,7 +324,6 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1vxrnwj" sourceRef="Activity_1r08zqz" targetRef="Activity_10yyr4b" />
     <bpmn:sequenceFlow id="Flow_1hy3541" sourceRef="Activity_10xi5h7" targetRef="Event_1mvl9lo" />
-    <bpmn:association id="Association_0r9d6jh" associationDirection="None" sourceRef="Activity_0q4i1w1" targetRef="TextAnnotation_15w0pup" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_14kx157">
@@ -339,22 +385,6 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
         <dc:Bounds x="2470" y="400" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0lx6u43_di" bpmnElement="Association_0lx6u43">
-        <di:waypoint x="1240" y="421" />
-        <di:waypoint x="1218" y="413" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0pg4fkf_di" bpmnElement="Association_0pg4fkf">
-        <di:waypoint x="1670" y="421" />
-        <di:waypoint x="1830" y="365" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0rwnlil_di" bpmnElement="Association_0rwnlil">
-        <di:waypoint x="1660" y="400" />
-        <di:waypoint x="1675" y="385" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_050v970_di" bpmnElement="Association_050v970">
-        <di:waypoint x="2270" y="410" />
-        <di:waypoint x="2317" y="380" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1ov941t_di" bpmnElement="Association_1ov941t">
         <di:waypoint x="2395" y="480" />
         <di:waypoint x="2420" y="520" />
@@ -530,10 +560,6 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
         <di:waypoint x="3142" y="921" />
         <di:waypoint x="3153" y="910" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_11cuxwd_di" bpmnElement="Association_11cuxwd">
-        <di:waypoint x="1835" y="912" />
-        <di:waypoint x="1820" y="924" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1nv9dsj_di" bpmnElement="Association_1nv9dsj">
         <di:waypoint x="6222" y="920" />
         <di:waypoint x="6215" y="910" />
@@ -545,14 +571,6 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
       <bpmndi:BPMNEdge id="Association_10ijzfi_di" bpmnElement="Association_10ijzfi">
         <di:waypoint x="6575" y="921" />
         <di:waypoint x="6584" y="913" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1c2tk03_di" bpmnElement="Association_1c2tk03">
-        <di:waypoint x="2130" y="982" />
-        <di:waypoint x="2216" y="1020" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0wbmtu4_di" bpmnElement="Association_0wbmtu4">
-        <di:waypoint x="2130" y="949" />
-        <di:waypoint x="2220" y="928" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0nkbdok_di" bpmnElement="Flow_0nkbdok">
         <di:waypoint x="4200" y="960" />
@@ -630,10 +648,6 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
       <bpmndi:BPMNShape id="Event_1mvl9lo_di" bpmnElement="Event_1mvl9lo">
         <dc:Bounds x="7192" y="1202" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0r9d6jh_di" bpmnElement="Association_0r9d6jh">
-        <di:waypoint x="1970" y="1240" />
-        <di:waypoint x="2103" y="1290" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1vxrnwj_di" bpmnElement="Flow_1vxrnwj">
         <di:waypoint x="3430" y="1220" />
         <di:waypoint x="3480" y="1220" />
@@ -646,28 +660,8 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
         <di:waypoint x="688" y="160" />
         <di:waypoint x="726" y="120" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0ponnit_di" bpmnElement="TextAnnotation_0ponnit">
-        <dc:Bounds x="1095" y="360" width="245" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_17oges5_di" bpmnElement="TextAnnotation_17oges5">
-        <dc:Bounds x="1830" y="340" width="342.99089068825907" height="98.51551956815115" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_15w0pup_di" bpmnElement="TextAnnotation_15w0pup">
-        <dc:Bounds x="2070" y="1290" width="165" height="41" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0p034oe_di" bpmnElement="TextAnnotation_0p034oe">
-        <dc:Bounds x="2300" y="347" width="190" height="33" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0gkftq5_di" bpmnElement="TextAnnotation_0gkftq5">
         <dc:Bounds x="2380" y="520" width="99.98772501462868" height="40.485827385494424" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_02aqr9h_di" bpmnElement="TextAnnotation_02aqr9h">
-        <dc:Bounds x="1650" y="344" width="99.99823487178789" height="40.650402073522336" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_17xt20t_di" bpmnElement="TextAnnotation_17xt20t">
@@ -678,16 +672,8 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
         <dc:Bounds x="4455" y="620" width="250" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0x2g92j_di" bpmnElement="TextAnnotation_0x2g92j" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="2200" y="1020" width="99.9941275985639" height="69.70250955342016" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1gmrut3_di" bpmnElement="TextAnnotation_1gmrut3" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="3130" y="870" width="99.9941275985639" height="40.4458727155413" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_00fzwxj_di" bpmnElement="TextAnnotation_00fzwxj">
-        <dc:Bounds x="1820" y="870" width="150" height="55" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_030wpc8_di" bpmnElement="TextAnnotation_030wpc8">
@@ -700,10 +686,6 @@ BPMN: podproces-gadka.bpmn</bpmn:documentation>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1951h9y_di" bpmnElement="TextAnnotation_1951h9y" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
         <dc:Bounds x="6555" y="883" width="170" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1njn797_di" bpmnElement="TextAnnotation_1njn797" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="2220" y="910" width="300" height="40" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1mvt7py_di" bpmnElement="TextAnnotation_1mvt7py">
