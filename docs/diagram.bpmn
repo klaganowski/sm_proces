@@ -41,17 +41,8 @@
     <bpmn:messageFlow id="Flow_09qhfyh" sourceRef="Activity_0x0q8ww" targetRef="Activity_0kc05c1" />
     <bpmn:messageFlow id="Flow_170r39o" sourceRef="Activity_058mcb4" targetRef="Activity_15982hy" />
     <bpmn:messageFlow id="Flow_1govqr0" sourceRef="Activity_1fooqpo" targetRef="Activity_10xi5h7" />
-    <bpmn:textAnnotation id="TextAnnotation_0gkftq5">
-      <bpmn:text>+ weryfikacja umowy</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_17xt20t">
-      <bpmn:text>wraz z kompletem informacji/uwag</bpmn:text>
-    </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_0frzxcr">
       <bpmn:text>wraz z kompletem informacji/uwag</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_1gmrut3">
-      <bpmn:text>potwierdza brak zastrzezen</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_030wpc8">
       <bpmn:text>definicja dobrze opublikowanego</bpmn:text>
@@ -70,16 +61,26 @@
 - przypiety komentarz
 - czy link dziala i sie zgadza</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_1xcq6am">
-      <bpmn:text>zakaz konkurencji</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_0z64tv4" associationDirection="None" sourceRef="Activity_1aegtd6" targetRef="TextAnnotation_1xcq6am" />
   </bpmn:collaboration>
   <bpmn:process id="Process_14k1axc" isExecutable="false">
-    <bpmn:task id="Activity_0a06q3f" name="Pełne uzupełnienie danych kampanii w Mondayu">
+    <bpmn:task id="Activity_0a06q3f" name="Pełne uzupełnienie danych kampanii w Monday&#39;u">
+      <bpmn:documentation>Account Manager, po przejęciu kampanii od Sprzedawcy, uzupełnia wszystkie wymagane dane w Monday’u na podstawie informacji przekazanych przez Sprzedawcę oraz ustaleń z Klientem.
+
+Account Manager:
+- weryfikuje informacje przekazane przez Sprzedawcę
+- uzupełnia wszystkie wymagane pola w Monday’u
+- wpisuje świadczenia zarówno w głównej komórce, jak i w odpowiednich subtaskach
+- uzupełnia stawki dla Twórców oraz właściwe waluty rozliczenia
+- dodaje deadline’y oraz kluczowe terminy realizacji kampanii
+- dodaje brief potrzebny do realizacji kampanii
+- sprawdza, czy brief zawiera informacje niezbędne do przygotowania materiałów i publikacji
+- dodaje w świadczeniach wymagania dodatkowe, np. zakaz konkurencji, usage rights, 
+- dodaje inforamacje dodatkowe np. obowiązkowe komunikaty, linki, hashtagi, oznaczenia lub ograniczenia komunikacyjne
+- sprawdza, czy dane w Monday’u są spójne z zaakceptowaną ofertą oraz ustaleniami z Klientem</bpmn:documentation>
       <bpmn:outgoing>Flow_0gprm3z</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_0srbb2t" name="Zmiana statusu na &#34;Do realizac ji&#34;">
+    <bpmn:task id="Activity_0srbb2t" name="Zmiana statusu na&#10;&#34;Do realizacji&#34;">
+      <bpmn:documentation>Account Manager, po pełnym uzupełnieniu danych kampanii w Monday’u, zmienia status wszystkich realizacji w kampanii na „Do realizacji”. Oznacza to, że kampania jest gotowa do rozpoczęcia dalszej obsługi przez Opiekuna Twórcy i Twórcę.</bpmn:documentation>
       <bpmn:incoming>Flow_0gprm3z</bpmn:incoming>
     </bpmn:task>
     <bpmn:task id="Activity_14zsc1o" name="Weryfikacja materiału od TM">
@@ -124,17 +125,54 @@
       <bpmn:outgoing>Flow_0nkbdok</bpmn:outgoing>
       <bpmn:outgoing>Flow_1i556r9</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_0uo4yum" name="Dopilnowanie dostarczenia materiału do weryfikacji NA CZAS">
+    <bpmn:task id="Activity_0uo4yum" name="Dopilnowanie dostarczenia materiału do weryfikacji">
+      <bpmn:documentation>Talent Manager pilnuje, aby Twórca dostarczył materiał do weryfikacji zgodnie z ustalonym terminem wpisanym w Monday’u.</bpmn:documentation>
       <bpmn:incoming>Flow_0c48fqn</bpmn:incoming>
       <bpmn:incoming>Flow_1i556r9</bpmn:incoming>
     </bpmn:task>
     <bpmn:task id="Activity_0fcsepo" name="Wprowadzenie dat weryfikacji i publikacji do Mondaya">
+      <bpmn:documentation>Opiekun Twórcy uzupełnia w Monday’u daty związane z realizacją materiałów przez Twórcę.
+
+Opiekun Twórcy:
+- wpisuje planowaną datę dostarczenia materiałów do weryfikacji
+- wpisuje planowaną datę publikacji materiałów
+- upewnia się, że daty są zgodne z ustaleniami przekazanymi Twórcy
+- sprawdza, czy terminy mieszczą się w deadline’ach kampanii
+- weryfikuje, czy daty są realne względem zakresu świadczeń i czasu potrzebnego na akceptację materiałów
+- w przypadku zmiany terminów aktualizuje Monday’a możliwie jak najszybciej (i informuje w update Account Managera)
+- informuje Account Managera, jeśli proponowane daty wpływają na harmonogram kampanii lub wymagają dodatkowej akceptacji</bpmn:documentation>
       <bpmn:outgoing>Flow_0c48fqn</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Activity_1suwntp" name="Kompleksowe zbriefowanie Twórcy">
+      <bpmn:documentation>Opiekun Twórcy przekazuje Twórcy komplet informacji potrzebnych do prawidłowej realizacji kampanii.
+
+Opiekun Twórcy:
+- przekazuje Twórcy pełny brief kampanii
+- opisuje markę, produkt lub usługę, której dotyczy kampania
+- tłumaczy cel kampanii oraz oczekiwany efekt działań
+- przedstawia zakres świadczeń, które Twórca ma zrealizować
+- jasno komunikuje deadline’y oraz terminy publikacji
+- przekazuje wymagania dotyczące materiałów, np. format, długość, liczba publikacji, platforma, oznaczenia, hashtagi, linki lub obowiązkowe komunikaty
+- informuje o ograniczeniach i wymaganiach dodatkowych, np. zakaz konkurencji, usage rights, zakazane sformułowania lub ograniczenia w komunikacji
+- wyjaśnia elementy briefu, które mogą być dla Twórcy niejasne
+- proaktywnie odpowiada na potencjalne pytania Twórcy, zanim staną się problemem w realizacji
+- upewnia się, że Twórca wie, co dokładnie ma przygotować, w jakiej formie i do kiedy
+- ustala z Twórcą deklarowane daty przygotowania materiału do weryfikacji i potencjalnej publikacji</bpmn:documentation>
       <bpmn:incoming>Flow_11dnuep</bpmn:incoming>
     </bpmn:task>
     <bpmn:task id="Activity_1s6j0h2" name="Zapoznanie się z materiałami z Mondaya">
+      <bpmn:documentation>Opiekun Twórcy zapoznaje się z materiałami oraz informacjami uzupełnionymi w Monday’u po zmianie statusu realizacji na „Do realizacji”.
+
+Opiekun Twórcy:
+- zapoznaje się z informacjami znajdującymi się na tablicy kampanii w Monday’u
+- sprawdza brief potrzebny do realizacji kampanii
+- weryfikuje zakres świadczeń przypisanych do Twórcy
+- sprawdza deadline’y oraz terminy realizacji kampanii
+- weryfikuje stawki, waluty oraz ustalone warunki współpracy
+- sprawdza wymagania dodatkowe, np. zakaz konkurencji, usage rights, obowiązkowe komunikaty, linki, hashtagi, oznaczenia lub ograniczenia komunikacyjne
+- upewnia się, że w Monday’u nie ma braków, niejasności lub sprzecznych informacji
+- w przypadku braków lub wątpliwości zgłasza je Account Managerowi przed rozpoczęciem komunikacji z Twórcą
+- po zapoznaniu się z materiałami dodaje update w Monday’u z potwierdzeniem, że informacje są kompletne i zrozumiałe</bpmn:documentation>
       <bpmn:outgoing>Flow_11dnuep</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Activity_1hl9lfj" name="Przedstawia ofertę Twórcy i zachęca go do udziału w kampanii">
@@ -214,8 +252,6 @@ jeśli Twórca zgłasza jakiekolwiek „ale”, warunki lub zastrzeżenia, Opiek
     <bpmn:sequenceFlow id="Flow_0cm5x7i" sourceRef="Activity_0towmlb" targetRef="Activity_058mcb4" />
     <bpmn:sequenceFlow id="Flow_1mz6kf8" sourceRef="Activity_058mcb4" targetRef="Activity_0zjpphj" />
     <bpmn:sequenceFlow id="Flow_1osp56z" sourceRef="Activity_0x0q8ww" targetRef="Activity_1fooqpo" />
-    <bpmn:association id="Association_1ju4i8x" associationDirection="None" sourceRef="Activity_0u8jcv2" targetRef="TextAnnotation_17xt20t" />
-    <bpmn:association id="Association_0uxtwiy" associationDirection="None" sourceRef="Activity_1s6j0h2" targetRef="TextAnnotation_1gmrut3" />
     <bpmn:association id="Association_1nv9dsj" associationDirection="None" sourceRef="Activity_0towmlb" targetRef="TextAnnotation_030wpc8" />
     <bpmn:association id="Association_1fruwai" associationDirection="None" sourceRef="Activity_0towmlb" targetRef="TextAnnotation_1mvt7py" />
     <bpmn:association id="Association_10ijzfi" associationDirection="None" sourceRef="Activity_0zjpphj" targetRef="TextAnnotation_1951h9y" />
@@ -275,19 +311,32 @@ Szczególnie ważne jest, aby już na tym etapie w tablicy był jasno wskazany d
 BPMN: podproces-dodanie_tablicy.bpmn</bpmn:documentation>
     </bpmn:task>
     <bpmn:task id="Activity_0s2szsq" name="Wraca z informacją do klienta">
+      <bpmn:documentation>Sprzedawca przekazuje Klientowi aktualną informację zwrotną po weryfikacji oferty z Twórcą. Na tym etapie komunikuje, czy Twórca zaakceptował przedstawione warunki, odmówił udziału albo zgłosił dodatkowe zastrzeżenia lub warunki wymagające decyzji Klienta.</bpmn:documentation>
       <bpmn:outgoing>Flow_129c15o</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_11lzdqy" name="Podpisanie umowy">
+    <bpmn:task id="Activity_11lzdqy" name="Podpisuje umowę z klientem">
+      <bpmn:documentation>Sprzedawca przechodzi przez proces podpisania umowy z Klientem.
+
+Sprzedawca:
+- przygotowuje lub inicjuje przygotowanie umowy z Klientem
+- przechodzi przez etap weryfikacji umowy zgodnie z obowiązującym procesem
+- prowadzi ewentualne negocjacje zapisów umowy z Klientem
+- pilnuje, aby finalna wersja umowy była zgodna z ustaleniami kampanii, zaakceptowaną ofertą, budżetem, zakresem świadczeń, terminami oraz dodatkowymi wymaganiami
+- dodaje umowę do podpisania w Monday’u
+- uzyskuje podpisaną umowę od Klienta
+- dodaje do Monday’a egzemplarz umowy podpisany przez Klienta
+
+BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
       <bpmn:incoming>Flow_129c15o</bpmn:incoming>
       <bpmn:outgoing>Flow_1l338sy</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_0rjkyd9" name="Przekazanie kampanii do Accounta">
+    <bpmn:task id="Activity_0rjkyd9" name="Przekazuje kampanię do Account Managera">
+      <bpmn:documentation>Sprzedawca przekazuje kampanię do Account Managera po zakończeniu etapu sprzedażowego i formalnym potwierdzeniu współpracy z Klientem.</bpmn:documentation>
       <bpmn:incoming>Flow_1l338sy</bpmn:incoming>
     </bpmn:task>
     <bpmn:sequenceFlow id="Flow_0z87b3h" sourceRef="StartEvent_02zn40c" targetRef="Activity_1ykpzxg" />
     <bpmn:sequenceFlow id="Flow_129c15o" sourceRef="Activity_0s2szsq" targetRef="Activity_11lzdqy" />
     <bpmn:sequenceFlow id="Flow_1l338sy" sourceRef="Activity_11lzdqy" targetRef="Activity_0rjkyd9" />
-    <bpmn:association id="Association_1ov941t" associationDirection="None" sourceRef="Activity_11lzdqy" targetRef="TextAnnotation_0gkftq5" />
   </bpmn:process>
   <bpmn:process id="Process_1howy2u" isExecutable="false">
     <bpmn:task id="Activity_1aegtd6" name="Przekazuje komplet informacji o kampanii">
@@ -305,13 +354,13 @@ BPMN: podproces-dodanie_tablicy.bpmn</bpmn:documentation>
   </bpmn:process>
   <bpmn:process id="Process_1k0h4q7" isExecutable="false">
     <bpmn:task id="Activity_0q4i1w1" name="Odpowiada na ofertę" />
-    <bpmn:task id="Activity_1r08zqz" name="Zapoznanie się ze wszystkimi informacjami i  rozpoczecie pracy nad materiałami">
+    <bpmn:task id="Activity_1r08zqz" name="Zapoznanie się z informacjami  i praca nad świadczeniami">
       <bpmn:outgoing>Flow_1vxrnwj</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_10yyr4b" name="Deklaracja daty materiału do weryfikacji i publikacji">
+    <bpmn:task id="Activity_10yyr4b" name="Deklaruje daty materiału do weryfikacji i publikacji">
       <bpmn:incoming>Flow_1vxrnwj</bpmn:incoming>
     </bpmn:task>
-    <bpmn:task id="Activity_0fiignq" name="Przesłanie materiału do weryfikacji (materiał, opis/komnetarz)" />
+    <bpmn:task id="Activity_0fiignq" name="Przesłanie materiału do weryfikacji (materiał, opis, komentarz)" />
     <bpmn:task id="Activity_0717i45" name="Podaje dokładną datę publikacji" />
     <bpmn:task id="Activity_138t2nz" name="Publikuje materiał" />
     <bpmn:task id="Activity_1surc0u" name="Przesyła statystyki do TMa" />
@@ -385,10 +434,6 @@ BPMN: podproces-dodanie_tablicy.bpmn</bpmn:documentation>
         <dc:Bounds x="2470" y="400" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1ov941t_di" bpmnElement="Association_1ov941t">
-        <di:waypoint x="2395" y="480" />
-        <di:waypoint x="2420" y="520" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0z87b3h_di" bpmnElement="Flow_0z87b3h">
         <di:waypoint x="318" y="440" />
         <di:waypoint x="410" y="440" />
@@ -552,14 +597,6 @@ BPMN: podproces-dodanie_tablicy.bpmn</bpmn:documentation>
         <dc:Bounds x="2030" y="920" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1ju4i8x_di" bpmnElement="Association_1ju4i8x">
-        <di:waypoint x="4314" y="1000" />
-        <di:waypoint x="4335" y="1065" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0uxtwiy_di" bpmnElement="Association_0uxtwiy">
-        <di:waypoint x="3142" y="921" />
-        <di:waypoint x="3153" y="910" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1nv9dsj_di" bpmnElement="Association_1nv9dsj">
         <di:waypoint x="6222" y="920" />
         <di:waypoint x="6215" y="910" />
@@ -656,24 +693,8 @@ BPMN: podproces-dodanie_tablicy.bpmn</bpmn:documentation>
         <di:waypoint x="7140" y="1220" />
         <di:waypoint x="7192" y="1220" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0z64tv4_di" bpmnElement="Association_0z64tv4">
-        <di:waypoint x="688" y="160" />
-        <di:waypoint x="726" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0gkftq5_di" bpmnElement="TextAnnotation_0gkftq5">
-        <dc:Bounds x="2380" y="520" width="99.98772501462868" height="40.485827385494424" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_17xt20t_di" bpmnElement="TextAnnotation_17xt20t">
-        <dc:Bounds x="4290" y="1065" width="219.9917216195739" height="29.992871168183118" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0frzxcr_di" bpmnElement="TextAnnotation_0frzxcr">
         <dc:Bounds x="4455" y="620" width="250" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1gmrut3_di" bpmnElement="TextAnnotation_1gmrut3" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="3130" y="870" width="99.9941275985639" height="40.4458727155413" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_030wpc8_di" bpmnElement="TextAnnotation_030wpc8">
@@ -785,9 +806,9 @@ BPMN: podproces-dodanie_tablicy.bpmn</bpmn:documentation>
         <di:waypoint x="4100" y="960" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0dy3w71_di" bpmnElement="Flow_0dy3w71">
-        <di:waypoint x="4300" y="920" />
-        <di:waypoint x="4300" y="700" />
-        <di:waypoint x="4380" y="700" />
+        <di:waypoint x="4350" y="960" />
+        <di:waypoint x="4430" y="960" />
+        <di:waypoint x="4430" y="740" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_05jodvb_di" bpmnElement="Flow_05jodvb">
         <di:waypoint x="4630" y="700" />
@@ -898,10 +919,6 @@ BPMN: podproces-dodanie_tablicy.bpmn</bpmn:documentation>
         <di:waypoint x="6960" y="1220" />
         <di:waypoint x="7040" y="1220" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_1xcq6am_di" bpmnElement="TextAnnotation_1xcq6am">
-        <dc:Bounds x="700" y="80" width="99.99156545209178" height="40.48582995951417" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
