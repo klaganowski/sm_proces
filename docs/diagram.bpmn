@@ -95,11 +95,31 @@ Account Manager:
       <bpmn:documentation>Account Manager ponownie weryfikuje opublikowany materiał na podstawie linku dodanego do Monday’a przez Opiekuna Twórcy.</bpmn:documentation>
       <bpmn:outgoing>Flow_0bdr6vd</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_0vvfk3o" name="Zgłasza zapotrzebowanie FV">
+    <bpmn:task id="Activity_0vvfk3o" name="Wnioskuje o fakturę">
+      <bpmn:documentation>Account Manager zgłasza zapotrzebowanie na fakturę dla Klienta zgodnie z obowiązującym podprocesem fakturowania.
+
+Account Manager:
+- zgłasza zapotrzebowanie na fakturę zgodnie z obowiązującym podprocesem
+- przekazuje dane niezbędne do przygotowania faktury
+- upewnia się, że dane faktury są zgodne z ustaleniami kampanii, zaakceptowaną ofertą i warunkami umowy
+- otrzymuje fakturę roboczą do weryfikacji
+- sprawdza, czy faktura robocza zawiera poprawne dane Klienta, kwoty, walutę, zakres usługi oraz inne wymagane informacje
+- potwierdza, że faktura robocza się zgadza albo zgłasza potrzebne poprawki
+- otrzmuje finalną fakturę w PDFie, a równolegle jest ona przesyłana przez KSeF</bpmn:documentation>
       <bpmn:incoming>Flow_0bdr6vd</bpmn:incoming>
       <bpmn:outgoing>Flow_18l8w8a</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Activity_0kc05c1" name="Przesyła raport i fakturę do klienta">
+      <bpmn:documentation>Account Manager przesyła Klientowi podsumowanie zrealizowanej kampanii oraz fakturę w formie PDF. 
+
+W ramach zadania Account Manager:
+- przygotowuje lub kompletuje raport z realizacji kampanii
+- sprawdza, czy raport zawiera wszystkie wymagane informacje
+- dodaje do raportu statystyki z publikacji
+- dodaje linki do zrealizowanych świadczeń
+- uwzględnia informacje o Twórcach, materiałach, datach publikacji i wynikach
+- sprawdza, czy dane w raporcie są zgodne z informacjami z Monday’a
+- załącza wersję PDF faktury dla Klienta</bpmn:documentation>
       <bpmn:incoming>Flow_18l8w8a</bpmn:incoming>
       <bpmn:outgoing>Flow_1mb7ij7</bpmn:outgoing>
     </bpmn:task>
@@ -272,9 +292,18 @@ Opiekun Twórcy:
       <bpmn:incoming>Flow_1mz6kf8</bpmn:incoming>
     </bpmn:task>
     <bpmn:task id="Activity_1fooqpo" name="Przekazuje Twórcy nr rozliczenia do FV">
+      <bpmn:documentation>Opiekun Twórcy przekazuje Twórcy numer rozliczenia do faktury po otrzymaniu od niego wymaganych statystyk po publikacji. Dopiero po dostarczeniu statystyk świadczenie uznaje się za zrealizowane i możliwe do rozliczenia.
+
+Opiekun Twórcy:
+- sprawdza, czy Twórca przesłał komplet wymaganych statystyk
+- upewnia się, że statystyki zostały dodane do Monday’a
+- potwierdza, że świadczenie może zostać uznane za zrealizowane
+- przekazuje Twórcy numer rozliczenia w formacie SP-XXXXXX
+- informuje Twórcę, że numer rozliczenia musi zostać umieszczony na fakturze</bpmn:documentation>
       <bpmn:incoming>Flow_1osp56z</bpmn:incoming>
     </bpmn:task>
     <bpmn:task id="Activity_0x0q8ww" name="Wrzuca statystyki do Monday&#39;a">
+      <bpmn:documentation>Opiekun Twórcy dodaje do Monday’a statystyki otrzymane od Twórcy po publikacji materiału.</bpmn:documentation>
       <bpmn:outgoing>Flow_1osp56z</bpmn:outgoing>
     </bpmn:task>
   </bpmn:process>
@@ -387,8 +416,8 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
     <bpmn:sequenceFlow id="Flow_1vxrnwj" sourceRef="Activity_1r08zqz" targetRef="Activity_10yyr4b" />
     <bpmn:sequenceFlow id="Flow_1hy3541" sourceRef="Activity_10xi5h7" targetRef="Event_1mvl9lo" />
     <bpmn:task id="Activity_138t2nz" name="Publikuje materiał" />
-    <bpmn:task id="Activity_1surc0u" name="Przesyła statystyki do TMa" />
-    <bpmn:task id="Activity_10xi5h7" name="Wystawia FV i wysyła na maila faktury@, w DW daje TMa">
+    <bpmn:task id="Activity_1surc0u" name="Przesyła statystyki do Opiekuna" />
+    <bpmn:task id="Activity_10xi5h7" name="Poprawnie wystawia fakturę i wysyła przez KSeF">
       <bpmn:documentation>URL: https://stormmedia-gg.monday.com/docs/18411443779</bpmn:documentation>
       <bpmn:outgoing>Flow_1hy3541</bpmn:outgoing>
     </bpmn:task>
