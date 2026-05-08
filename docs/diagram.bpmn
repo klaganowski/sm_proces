@@ -41,26 +41,6 @@
     <bpmn:messageFlow id="Flow_09qhfyh" sourceRef="Activity_0x0q8ww" targetRef="Activity_0kc05c1" />
     <bpmn:messageFlow id="Flow_170r39o" sourceRef="Activity_058mcb4" targetRef="Activity_15982hy" />
     <bpmn:messageFlow id="Flow_1govqr0" sourceRef="Activity_1fooqpo" targetRef="Activity_10xi5h7" />
-    <bpmn:textAnnotation id="TextAnnotation_0frzxcr">
-      <bpmn:text>wraz z kompletem informacji/uwag</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_030wpc8">
-      <bpmn:text>definicja dobrze opublikowanego</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_1twv2n3">
-      <bpmn:text>definicja dobrze opublikowanego</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_1951h9y">
-      <bpmn:text>standard zbierania statystyk</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_1mvt7py">
-      <bpmn:text>poprawnie opublikowany:
-- czy w dobrym momencie
-- tytul
-- opis
-- przypiety komentarz
-- czy link dziala i sie zgadza</bpmn:text>
-    </bpmn:textAnnotation>
   </bpmn:collaboration>
   <bpmn:process id="Process_14k1axc" isExecutable="false">
     <bpmn:task id="Activity_0a06q3f" name="Pełne uzupełnienie danych kampanii w Monday&#39;u">
@@ -83,45 +63,73 @@ Account Manager:
       <bpmn:documentation>Account Manager, po pełnym uzupełnieniu danych kampanii w Monday’u, zmienia status wszystkich realizacji w kampanii na „Do realizacji”. Oznacza to, że kampania jest gotowa do rozpoczęcia dalszej obsługi przez Opiekuna Twórcy i Twórcę.</bpmn:documentation>
       <bpmn:incoming>Flow_0gprm3z</bpmn:incoming>
     </bpmn:task>
-    <bpmn:task id="Activity_14zsc1o" name="Weryfikacja materiału od TM">
+    <bpmn:task id="Activity_14zsc1o" name="Weryfikacja materiału otrzymanego od TM">
+      <bpmn:documentation>Account Manager weryfikuje materiał dodany do Monday’a przez Opiekuna Twórcy. Jest to druga kontrola materiału przed przekazaniem go do Klienta, mająca na celu upewnienie się, że materiał spełnia wymagania kampanii, jest zgodny z briefem oraz bezpieczny dla marki.</bpmn:documentation>
       <bpmn:outgoing>Flow_1aavtsd</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_0u8fhco" name="Przesłanie mateirału do akceptacji do Klienta">
+    <bpmn:task id="Activity_0u8fhco" name="Przesłanie materiału do akceptacji do Klienta">
+      <bpmn:documentation>Account Manager przesyła Klientowi materiał przygotowany przez Twórcę do akceptacji.
+
+Account Manager:
+- przesyła Klientowi materiał lub link do materiału
+- jasno wskazuje, którego Twórcy i którego świadczenia dotyczy materiał
+- przypomina Klientowi o terminie na zgłoszenie uwag lub akceptację
+- przekazuje materiał nawet wtedy, gdy pojawiły się drobne uwagi lub elementy wymagające decyzji Klienta, jeśli zgodnie z oceną Account Managera warto przekazać je do akceptacji</bpmn:documentation>
       <bpmn:incoming>Flow_1aavtsd</bpmn:incoming>
     </bpmn:task>
-    <bpmn:task id="Activity_1ywrxar" name="Potwierdza poprawnosc materiału w Mondayu" />
-    <bpmn:task id="Activity_1788wod" name="Informuje klienta o dacie publikacji/szczególach" />
-    <bpmn:task id="Activity_0b3kjyo" name="Potwierdza publikacje" />
-    <bpmn:task id="Activity_0kc05c1" name="Przesyła raport i fakturę do klienta">
-      <bpmn:incoming>Flow_18l8w8a</bpmn:incoming>
-      <bpmn:outgoing>Flow_1mb7ij7</bpmn:outgoing>
+    <bpmn:task id="Activity_1ywrxar" name="Potwierdza akceptację materiału w Mondayu">
+      <bpmn:documentation>Account Manager aktualizuje status materiału w Monday’u po otrzymaniu akceptacji od Klienta.</bpmn:documentation>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0gprm3z" sourceRef="Activity_0a06q3f" targetRef="Activity_0srbb2t" />
+    <bpmn:sequenceFlow id="Flow_1aavtsd" sourceRef="Activity_14zsc1o" targetRef="Activity_0u8fhco" />
+    <bpmn:sequenceFlow id="Flow_18l8w8a" sourceRef="Activity_0vvfk3o" targetRef="Activity_0kc05c1" />
+    <bpmn:sequenceFlow id="Flow_1mb7ij7" sourceRef="Activity_0kc05c1" targetRef="Event_1ww2p5s" />
+    <bpmn:sequenceFlow id="Flow_0bdr6vd" sourceRef="Activity_15982hy" targetRef="Activity_0vvfk3o" />
+    <bpmn:task id="Activity_1788wod" name="Informuje klienta o dacie publikacji/szczególach">
+      <bpmn:documentation>Account Manager przekazuje Klientowi informację o finalnej dacie publikacji materiału ustalonej z Twórcą.</bpmn:documentation>
+    </bpmn:task>
+    <bpmn:task id="Activity_0b3kjyo" name="Potwierdza publikacje">
+      <bpmn:documentation>Account Manager potwierdza, że ustalony termin oraz szczegóły realizacji pozostają aktualne i materiał może zostać opublikowany.</bpmn:documentation>
     </bpmn:task>
     <bpmn:task id="Activity_15982hy" name="Weryfikuje opublikowany materiał">
+      <bpmn:documentation>Account Manager ponownie weryfikuje opublikowany materiał na podstawie linku dodanego do Monday’a przez Opiekuna Twórcy.</bpmn:documentation>
       <bpmn:outgoing>Flow_0bdr6vd</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Activity_0vvfk3o" name="Zgłasza zapotrzebowanie FV">
       <bpmn:incoming>Flow_0bdr6vd</bpmn:incoming>
       <bpmn:outgoing>Flow_18l8w8a</bpmn:outgoing>
     </bpmn:task>
+    <bpmn:task id="Activity_0kc05c1" name="Przesyła raport i fakturę do klienta">
+      <bpmn:incoming>Flow_18l8w8a</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mb7ij7</bpmn:outgoing>
+    </bpmn:task>
     <bpmn:endEvent id="Event_1ww2p5s">
       <bpmn:incoming>Flow_1mb7ij7</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0gprm3z" sourceRef="Activity_0a06q3f" targetRef="Activity_0srbb2t" />
-    <bpmn:sequenceFlow id="Flow_1aavtsd" sourceRef="Activity_14zsc1o" targetRef="Activity_0u8fhco" />
-    <bpmn:sequenceFlow id="Flow_18l8w8a" sourceRef="Activity_0vvfk3o" targetRef="Activity_0kc05c1" />
-    <bpmn:sequenceFlow id="Flow_1mb7ij7" sourceRef="Activity_0kc05c1" targetRef="Event_1ww2p5s" />
-    <bpmn:sequenceFlow id="Flow_0bdr6vd" sourceRef="Activity_15982hy" targetRef="Activity_0vvfk3o" />
-    <bpmn:association id="Association_16lqiut" associationDirection="None" sourceRef="Activity_0u8fhco" targetRef="TextAnnotation_0frzxcr" />
-    <bpmn:association id="Association_08p60it" associationDirection="None" sourceRef="Activity_15982hy" targetRef="TextAnnotation_1twv2n3" />
   </bpmn:process>
   <bpmn:process id="Process_0vbc7y0" isExecutable="false">
-    <bpmn:task id="Activity_0k82dzy" name="Dopilnowywuje publikacji w zadeklarowanym terminie" />
-    <bpmn:task id="Activity_1svveup" name="Wprowadza datę publikacji i szczegóły do Mondaya" />
-    <bpmn:task id="Activity_1hbcygj" name="Wraca z potwierdzeniem do Twórcy i ustala dokładną datę publikacji" />
+    <bpmn:task id="Activity_1hbcygj" name="Wraca z potwierdzeniem do Twórcy i ustala dokładną datę publikacji">
+      <bpmn:documentation>Opiekun Twórcy przekazuje Twórcy informację, że materiał został zaakceptowany przez Klienta i może zostać przygotowany do publikacji. Na tym etapie Opiekun potwierdza z Twórcą dokładny termin publikacji zgodny z harmonogramem kampanii.</bpmn:documentation>
+    </bpmn:task>
     <bpmn:task id="Activity_0u8jcv2" name="Dodanie materiału do akceptacji do Mondaya">
+      <bpmn:documentation>Opiekun Twórcy dodaje materiał do Monday’a po wcześniejszej weryfikacji i potwierdzeniu, że jest zgodny z briefem, ustaleniami kampanii oraz wymaganiami Klienta.</bpmn:documentation>
       <bpmn:incoming>Flow_0nkbdok</bpmn:incoming>
     </bpmn:task>
     <bpmn:task id="Activity_1dhgm39" name="Weryfikacja materiału od Twórcy">
+      <bpmn:documentation>Opiekun Twórcy weryfikuje materiał dostarczony przez Twórcę przed przekazaniem go do dalszej akceptacji.
+
+Opiekun Twórcy:
+- sprawdza, czy materiał jest zgodny z briefem kampanii
+- weryfikuje, czy materiał realizuje uzgodniony cel kampanii
+- sprawdza, czy zostały uwzględnione wymagane komunikaty, oznaczenia, hashtagi, linki lub inne elementy obowiązkowe
+- weryfikuje, czy zakres materiału odpowiada zakontraktowanemu świadczeniu
+- sprawdza, czy w materiale nie pojawiają się marki konkurencyjne
+- weryfikuje, czy Twórca nie wypowiada się negatywnie o marce, produkcie lub usłudze
+- sprawdza, czy materiał nie zawiera wulgarnej terminologii
+- ocenia, czy w całym materiale nie pojawiają się treści kontrowersyjne, ryzykowne wizerunkowo lub niezgodne z charakterem kampanii
+- sprawdza, czy produkt został pokazany z odpowiednim szacunkiem i zgodnie z oczekiwanym kontekstem komunikacyjnym
+- ocenia ogólną jakość materiału oraz jego zgodność z ustaleniami przekazanymi Twórcy
+w przypadku wykrycia błędów lub niezgodności przygotowuje jasny feedback dla Twórcy</bpmn:documentation>
       <bpmn:outgoing>Flow_0nkbdok</bpmn:outgoing>
       <bpmn:outgoing>Flow_1i556r9</bpmn:outgoing>
     </bpmn:task>
@@ -215,22 +223,6 @@ Po zakończonej weryfikacji Team Leader oznacza wycenę statusem „Gotowa”. J
 Opiekun powinien uzupełnić wycenę możliwie jak najsprawniej, bez odkładania zadania na ostatni moment przed deadlinem. Pozwala to Sprzedawcy na spokojne przygotowanie kompletnej oferty, weryfikację założeń oraz ewentualne doprecyzowanie informacji przed wysłaniem propozycji do Klienta.</bpmn:documentation>
       <bpmn:outgoing>Flow_1vb02zv</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_0towmlb" name="Weryfikuje czy materiał został poprawnie opublikowany">
-      <bpmn:outgoing>Flow_0cm5x7i</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="Activity_058mcb4" name="Wprwoadza link do materiału do Mondaya">
-      <bpmn:incoming>Flow_0cm5x7i</bpmn:incoming>
-      <bpmn:outgoing>Flow_1mz6kf8</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="Activity_0zjpphj" name="Zbiera statystyki po publikacji">
-      <bpmn:incoming>Flow_1mz6kf8</bpmn:incoming>
-    </bpmn:task>
-    <bpmn:task id="Activity_0x0q8ww" name="Wrzuca statystyki do Monday&#39;a">
-      <bpmn:outgoing>Flow_1osp56z</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="Activity_1fooqpo" name="Przekazuje Twórcy nr rozliczenia do FV">
-      <bpmn:incoming>Flow_1osp56z</bpmn:incoming>
-    </bpmn:task>
     <bpmn:task id="Activity_0qmlcv0" name="Wraca z akceptacją/jej brakiem do Monday’a">
       <bpmn:documentation>Opiekun Twórcy aktualizuje status w Monday’u po przedstawieniu Twórcy konkretnej oferty udziału w kampanii. Informacja dotyczy oferty, która została wcześniej zaprezentowana Twórcy i wstępnie zaakceptowana przez Klienta.
 
@@ -252,9 +244,39 @@ jeśli Twórca zgłasza jakiekolwiek „ale”, warunki lub zastrzeżenia, Opiek
     <bpmn:sequenceFlow id="Flow_0cm5x7i" sourceRef="Activity_0towmlb" targetRef="Activity_058mcb4" />
     <bpmn:sequenceFlow id="Flow_1mz6kf8" sourceRef="Activity_058mcb4" targetRef="Activity_0zjpphj" />
     <bpmn:sequenceFlow id="Flow_1osp56z" sourceRef="Activity_0x0q8ww" targetRef="Activity_1fooqpo" />
-    <bpmn:association id="Association_1nv9dsj" associationDirection="None" sourceRef="Activity_0towmlb" targetRef="TextAnnotation_030wpc8" />
-    <bpmn:association id="Association_1fruwai" associationDirection="None" sourceRef="Activity_0towmlb" targetRef="TextAnnotation_1mvt7py" />
-    <bpmn:association id="Association_10ijzfi" associationDirection="None" sourceRef="Activity_0zjpphj" targetRef="TextAnnotation_1951h9y" />
+    <bpmn:task id="Activity_0k82dzy" name="Dopilnowywuje publikacji w zadeklarowanym terminie">
+      <bpmn:documentation>Opiekun Twórcy pilnuje, aby Twórca opublikował zaakceptowany materiał zgodnie z ustaloną datą oraz szczegółami wpisanymi w Monday’u.</bpmn:documentation>
+    </bpmn:task>
+    <bpmn:task id="Activity_1svveup" name="Wprowadza datę publikacji i szczegóły do Mondaya">
+      <bpmn:documentation>Opiekun Twórcy uzupełnia w Monday’u finalną datę publikacji ustaloną z Twórcą po akceptacji materiału przez Klienta.</bpmn:documentation>
+    </bpmn:task>
+    <bpmn:task id="Activity_0towmlb" name="Weryfikuje czy materiał został poprawnie opublikowany">
+      <bpmn:documentation>Opiekun Twórcy sprawdza, czy materiał został opublikowany zgodnie z ustaleniami kampanii, zaakceptowaną wersją materiału oraz wymaganiami Klienta.
+
+Opiekun Twórcy:
+- sprawdza, czy materiał został opublikowany w ustalonym terminie
+- weryfikuje, czy publikacja pojawiła się we właściwym dniu i, jeśli dotyczy, o właściwej godzinie
+- sprawdza, czy opublikowany materiał jest zgodny z zaakceptowaną wersją
+- sprawdza, czy link działa poprawnie i prowadzi do właściwego miejsca
+- sprawdza, czy publikacja zawiera wszystkie elementy ustalone jako świadczenie dla Klienta
+- weryfikuje dodatkowe elementy, np. link w opisie, kod rabatowy na filmie, oznaczenia, hashtagi, tagowanie marki lub inne obowiązkowe komunikaty</bpmn:documentation>
+      <bpmn:outgoing>Flow_0cm5x7i</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_058mcb4" name="Dodaje link do materiału do Monday&#39;a">
+      <bpmn:documentation>Opiekun Twórcy dodaje do Monday’a link do opublikowanego materiału po potwierdzeniu, że publikacja została wykonana poprawnie i zgodnie z ustaleniami kampanii.</bpmn:documentation>
+      <bpmn:incoming>Flow_0cm5x7i</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mz6kf8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_0zjpphj" name="Zbiera statystyki po publikacji">
+      <bpmn:documentation>Opiekun Twórcy po publikacji materiału kontaktuje się z Twórcą i prosi o przesłanie statystyk zgodnie z wymaganiami danej kampanii.</bpmn:documentation>
+      <bpmn:incoming>Flow_1mz6kf8</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:task id="Activity_1fooqpo" name="Przekazuje Twórcy nr rozliczenia do FV">
+      <bpmn:incoming>Flow_1osp56z</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:task id="Activity_0x0q8ww" name="Wrzuca statystyki do Monday&#39;a">
+      <bpmn:outgoing>Flow_1osp56z</bpmn:outgoing>
+    </bpmn:task>
   </bpmn:process>
   <bpmn:process id="Process_1sec7kf" isExecutable="false">
     <bpmn:startEvent id="StartEvent_02zn40c" name="Jest kontakt z klientem">
@@ -349,7 +371,7 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
 - informacje dotyczące zakazu konkurencji oraz ewentualnych ograniczeń współpracy z innymi markami.</bpmn:documentation>
     </bpmn:task>
     <bpmn:task id="Activity_05risj5" name="Wybiera Twórców z Wyceny" />
-    <bpmn:task id="Activity_1jxwie2" name="Akceptacja/Odrzucenie materiału" />
+    <bpmn:task id="Activity_1jxwie2" name="Akceptacja/&#10;Odrzucenie materiału" />
     <bpmn:task id="Activity_172wrhn" name="Zgłasza ewentualne zastrzeżenia" />
   </bpmn:process>
   <bpmn:process id="Process_1k0h4q7" isExecutable="false">
@@ -362,6 +384,8 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
     </bpmn:task>
     <bpmn:task id="Activity_0fiignq" name="Przesłanie materiału do weryfikacji (materiał, opis, komentarz)" />
     <bpmn:task id="Activity_0717i45" name="Podaje dokładną datę publikacji" />
+    <bpmn:sequenceFlow id="Flow_1vxrnwj" sourceRef="Activity_1r08zqz" targetRef="Activity_10yyr4b" />
+    <bpmn:sequenceFlow id="Flow_1hy3541" sourceRef="Activity_10xi5h7" targetRef="Event_1mvl9lo" />
     <bpmn:task id="Activity_138t2nz" name="Publikuje materiał" />
     <bpmn:task id="Activity_1surc0u" name="Przesyła statystyki do TMa" />
     <bpmn:task id="Activity_10xi5h7" name="Wystawia FV i wysyła na maila faktury@, w DW daje TMa">
@@ -371,13 +395,11 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
     <bpmn:endEvent id="Event_1mvl9lo">
       <bpmn:incoming>Flow_1hy3541</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1vxrnwj" sourceRef="Activity_1r08zqz" targetRef="Activity_10yyr4b" />
-    <bpmn:sequenceFlow id="Flow_1hy3541" sourceRef="Activity_10xi5h7" targetRef="Event_1mvl9lo" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_14kx157">
       <bpmndi:BPMNShape id="Participant_0zjn384_di" bpmnElement="Participant_0zjn384" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="7950" height="250" />
+        <dc:Bounds x="160" y="80" width="8580" height="250" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1aegtd6_di" bpmnElement="Activity_1aegtd6">
@@ -393,11 +415,11 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_172wrhn_di" bpmnElement="Activity_172wrhn">
-        <dc:Bounds x="5580" y="160" width="100" height="80" />
+        <dc:Bounds x="5680" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Participant_00yp09o_di" bpmnElement="Participant_00yp09o" isHorizontal="true">
-        <dc:Bounds x="160" y="330" width="7950" height="250" />
+        <dc:Bounds x="160" y="330" width="8580" height="250" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_02zn40c">
@@ -447,7 +469,7 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
         <di:waypoint x="2470" y="440" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_1mmwcc1_di" bpmnElement="Participant_1mmwcc1" isHorizontal="true">
-        <dc:Bounds x="160" y="580" width="7950" height="250" />
+        <dc:Bounds x="160" y="580" width="8580" height="250" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0a06q3f_di" bpmnElement="Activity_0a06q3f">
@@ -471,36 +493,28 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1788wod_di" bpmnElement="Activity_1788wod">
-        <dc:Bounds x="5430" y="660" width="100" height="80" />
+        <dc:Bounds x="5530" y="660" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0b3kjyo_di" bpmnElement="Activity_0b3kjyo">
-        <dc:Bounds x="5730" y="660" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0kc05c1_di" bpmnElement="Activity_0kc05c1">
-        <dc:Bounds x="6890" y="660" width="100" height="80" />
+        <dc:Bounds x="5830" y="660" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_15982hy_di" bpmnElement="Activity_15982hy">
-        <dc:Bounds x="6460" y="660" width="100" height="80" />
+        <dc:Bounds x="6810" y="660" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0vvfk3o_di" bpmnElement="Activity_0vvfk3o">
-        <dc:Bounds x="6610" y="660" width="100" height="80" />
+        <dc:Bounds x="7060" y="660" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kc05c1_di" bpmnElement="Activity_0kc05c1">
+        <dc:Bounds x="7480" y="660" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1ww2p5s_di" bpmnElement="Event_1ww2p5s">
-        <dc:Bounds x="7172" y="682" width="36" height="36" />
+        <dc:Bounds x="7722" y="682" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_16lqiut_di" bpmnElement="Association_16lqiut">
-        <di:waypoint x="4536" y="661" />
-        <di:waypoint x="4523" y="650" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_08p60it_di" bpmnElement="Association_08p60it">
-        <di:waypoint x="6460" y="713" />
-        <di:waypoint x="6260" y="759" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0gprm3z_di" bpmnElement="Flow_0gprm3z">
         <di:waypoint x="2790" y="700" />
         <di:waypoint x="2860" y="700" />
@@ -510,27 +524,19 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
         <di:waypoint x="4530" y="700" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18l8w8a_di" bpmnElement="Flow_18l8w8a">
-        <di:waypoint x="6710" y="700" />
-        <di:waypoint x="6890" y="700" />
+        <di:waypoint x="7160" y="700" />
+        <di:waypoint x="7480" y="700" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mb7ij7_di" bpmnElement="Flow_1mb7ij7">
-        <di:waypoint x="6990" y="700" />
-        <di:waypoint x="7172" y="700" />
+        <di:waypoint x="7580" y="700" />
+        <di:waypoint x="7722" y="700" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0bdr6vd_di" bpmnElement="Flow_0bdr6vd">
-        <di:waypoint x="6560" y="700" />
-        <di:waypoint x="6610" y="700" />
+        <di:waypoint x="6910" y="700" />
+        <di:waypoint x="7060" y="700" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_1ckjvbd_di" bpmnElement="Participant_1ckjvbd" isHorizontal="true">
-        <dc:Bounds x="160" y="830" width="7950" height="250" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0k82dzy_di" bpmnElement="Activity_0k82dzy">
-        <dc:Bounds x="5900" y="920" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1svveup_di" bpmnElement="Activity_1svveup">
-        <dc:Bounds x="5300" y="920" width="100" height="80" />
+        <dc:Bounds x="160" y="830" width="8580" height="250" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1hbcygj_di" bpmnElement="Activity_1hbcygj">
@@ -573,42 +579,38 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
         <dc:Bounds x="920" y="910" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0towmlb_di" bpmnElement="Activity_0towmlb">
-        <dc:Bounds x="6200" y="920" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_058mcb4_di" bpmnElement="Activity_058mcb4">
-        <dc:Bounds x="6350" y="920" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0zjpphj_di" bpmnElement="Activity_0zjpphj">
-        <dc:Bounds x="6480" y="920" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0x0q8ww_di" bpmnElement="Activity_0x0q8ww">
-        <dc:Bounds x="6760" y="920" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1fooqpo_di" bpmnElement="Activity_1fooqpo">
-        <dc:Bounds x="6910" y="920" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0qmlcv0_di" bpmnElement="Activity_0qmlcv0">
         <dc:Bounds x="2030" y="920" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1nv9dsj_di" bpmnElement="Association_1nv9dsj">
-        <di:waypoint x="6222" y="920" />
-        <di:waypoint x="6215" y="910" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1fruwai_di" bpmnElement="Association_1fruwai">
-        <di:waypoint x="6238" y="920" />
-        <di:waypoint x="6180" y="720" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_10ijzfi_di" bpmnElement="Association_10ijzfi">
-        <di:waypoint x="6575" y="921" />
-        <di:waypoint x="6584" y="913" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0k82dzy_di" bpmnElement="Activity_0k82dzy">
+        <dc:Bounds x="6000" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1svveup_di" bpmnElement="Activity_1svveup">
+        <dc:Bounds x="5400" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0towmlb_di" bpmnElement="Activity_0towmlb">
+        <dc:Bounds x="6400" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_058mcb4_di" bpmnElement="Activity_058mcb4">
+        <dc:Bounds x="6610" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zjpphj_di" bpmnElement="Activity_0zjpphj">
+        <dc:Bounds x="6810" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fooqpo_di" bpmnElement="Activity_1fooqpo">
+        <dc:Bounds x="7480" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0x0q8ww_di" bpmnElement="Activity_0x0q8ww">
+        <dc:Bounds x="7320" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0nkbdok_di" bpmnElement="Flow_0nkbdok">
         <di:waypoint x="4200" y="960" />
         <di:waypoint x="4250" y="960" />
@@ -635,19 +637,19 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
         <di:waypoint x="1090" y="950" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0cm5x7i_di" bpmnElement="Flow_0cm5x7i">
-        <di:waypoint x="6300" y="960" />
-        <di:waypoint x="6350" y="960" />
+        <di:waypoint x="6500" y="960" />
+        <di:waypoint x="6610" y="960" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mz6kf8_di" bpmnElement="Flow_1mz6kf8">
-        <di:waypoint x="6450" y="960" />
-        <di:waypoint x="6480" y="960" />
+        <di:waypoint x="6710" y="960" />
+        <di:waypoint x="6810" y="960" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1osp56z_di" bpmnElement="Flow_1osp56z">
-        <di:waypoint x="6860" y="960" />
-        <di:waypoint x="6910" y="960" />
+        <di:waypoint x="7420" y="960" />
+        <di:waypoint x="7480" y="960" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_1y9f31c_di" bpmnElement="Participant_1y9f31c" isHorizontal="true">
-        <dc:Bounds x="160" y="1080" width="7950" height="250" />
+        <dc:Bounds x="160" y="1080" width="8580" height="250" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0q4i1w1_di" bpmnElement="Activity_0q4i1w1">
@@ -671,48 +673,28 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_138t2nz_di" bpmnElement="Activity_138t2nz">
-        <dc:Bounds x="6030" y="1180" width="100" height="80" />
+        <dc:Bounds x="6130" y="1180" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1surc0u_di" bpmnElement="Activity_1surc0u">
-        <dc:Bounds x="6590" y="1180" width="100" height="80" />
+        <dc:Bounds x="7060" y="1180" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_10xi5h7_di" bpmnElement="Activity_10xi5h7">
-        <dc:Bounds x="7040" y="1180" width="100" height="80" />
+        <dc:Bounds x="7700" y="1180" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1mvl9lo_di" bpmnElement="Event_1mvl9lo">
-        <dc:Bounds x="7192" y="1202" width="36" height="36" />
+        <dc:Bounds x="7882" y="1202" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1vxrnwj_di" bpmnElement="Flow_1vxrnwj">
         <di:waypoint x="3430" y="1220" />
         <di:waypoint x="3480" y="1220" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1hy3541_di" bpmnElement="Flow_1hy3541">
-        <di:waypoint x="7140" y="1220" />
-        <di:waypoint x="7192" y="1220" />
+        <di:waypoint x="7800" y="1220" />
+        <di:waypoint x="7882" y="1220" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0frzxcr_di" bpmnElement="TextAnnotation_0frzxcr">
-        <dc:Bounds x="4455" y="620" width="250" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_030wpc8_di" bpmnElement="TextAnnotation_030wpc8">
-        <dc:Bounds x="6150" y="870" width="179.99998474121094" height="39.999996185302734" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1twv2n3_di" bpmnElement="TextAnnotation_1twv2n3">
-        <dc:Bounds x="6150" y="750" width="110" height="40" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1951h9y_di" bpmnElement="TextAnnotation_1951h9y" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="6555" y="883" width="170" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1mvt7py_di" bpmnElement="TextAnnotation_1mvt7py">
-        <dc:Bounds x="5960" y="622" width="249.99998474121094" height="97.99241638183594" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1ny736s_di" bpmnElement="Flow_1ny736s">
         <di:waypoint x="510" y="440" />
         <di:waypoint x="560" y="440" />
@@ -839,7 +821,7 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
         <di:waypoint x="4800" y="700" />
         <di:waypoint x="4820" y="700" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="4777" y="447" width="77" height="27" />
+          <dc:Bounds x="4811" y="441" width="77" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_08r4xw7_di" bpmnElement="Flow_08r4xw7">
@@ -855,69 +837,71 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ln3m8u_di" bpmnElement="Flow_1ln3m8u">
         <di:waypoint x="5230" y="1220" />
-        <di:waypoint x="5260" y="1220" />
-        <di:waypoint x="5260" y="960" />
-        <di:waypoint x="5300" y="960" />
+        <di:waypoint x="5310" y="1220" />
+        <di:waypoint x="5310" y="960" />
+        <di:waypoint x="5400" y="960" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_14tegg2_di" bpmnElement="Flow_14tegg2">
-        <di:waypoint x="5350" y="920" />
-        <di:waypoint x="5350" y="700" />
-        <di:waypoint x="5430" y="700" />
+        <di:waypoint x="5450" y="920" />
+        <di:waypoint x="5450" y="700" />
+        <di:waypoint x="5530" y="700" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_06a3xok_di" bpmnElement="Flow_06a3xok">
-        <di:waypoint x="5530" y="700" />
-        <di:waypoint x="5560" y="700" />
-        <di:waypoint x="5560" y="200" />
-        <di:waypoint x="5580" y="200" />
+        <di:waypoint x="5630" y="700" />
+        <di:waypoint x="5660" y="700" />
+        <di:waypoint x="5660" y="200" />
+        <di:waypoint x="5680" y="200" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ld46so_di" bpmnElement="Flow_1ld46so">
-        <di:waypoint x="5680" y="200" />
-        <di:waypoint x="5710" y="200" />
-        <di:waypoint x="5710" y="700" />
-        <di:waypoint x="5730" y="700" />
+        <di:waypoint x="5780" y="200" />
+        <di:waypoint x="5810" y="200" />
+        <di:waypoint x="5810" y="700" />
+        <di:waypoint x="5830" y="700" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0j4uc9f_di" bpmnElement="Flow_0j4uc9f">
-        <di:waypoint x="5830" y="700" />
-        <di:waypoint x="5860" y="700" />
-        <di:waypoint x="5860" y="960" />
-        <di:waypoint x="5900" y="960" />
+        <di:waypoint x="5930" y="700" />
+        <di:waypoint x="5960" y="700" />
+        <di:waypoint x="5960" y="960" />
+        <di:waypoint x="6000" y="960" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1d40inx_di" bpmnElement="Flow_1d40inx">
-        <di:waypoint x="5950" y="1000" />
-        <di:waypoint x="5950" y="1220" />
-        <di:waypoint x="6030" y="1220" />
+        <di:waypoint x="6050" y="1000" />
+        <di:waypoint x="6050" y="1220" />
+        <di:waypoint x="6130" y="1220" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_07lqygo_di" bpmnElement="Flow_07lqygo">
-        <di:waypoint x="6130" y="1220" />
-        <di:waypoint x="6160" y="1220" />
-        <di:waypoint x="6160" y="960" />
-        <di:waypoint x="6200" y="960" />
+        <di:waypoint x="6230" y="1220" />
+        <di:waypoint x="6300" y="1220" />
+        <di:waypoint x="6300" y="960" />
+        <di:waypoint x="6400" y="960" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_07keasf_di" bpmnElement="Flow_07keasf">
-        <di:waypoint x="6580" y="960" />
-        <di:waypoint x="6640" y="960" />
-        <di:waypoint x="6640" y="1180" />
+        <di:waypoint x="6910" y="960" />
+        <di:waypoint x="6980" y="960" />
+        <di:waypoint x="6980" y="1220" />
+        <di:waypoint x="7060" y="1220" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1q8ver3_di" bpmnElement="Flow_1q8ver3">
-        <di:waypoint x="6690" y="1220" />
-        <di:waypoint x="6720" y="1220" />
-        <di:waypoint x="6720" y="960" />
-        <di:waypoint x="6760" y="960" />
+        <di:waypoint x="7160" y="1220" />
+        <di:waypoint x="7240" y="1220" />
+        <di:waypoint x="7240" y="960" />
+        <di:waypoint x="7320" y="960" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_09qhfyh_di" bpmnElement="Flow_09qhfyh">
-        <di:waypoint x="6810" y="920" />
-        <di:waypoint x="6810" y="700" />
-        <di:waypoint x="6890" y="700" />
+        <di:waypoint x="7370" y="920" />
+        <di:waypoint x="7370" y="720" />
+        <di:waypoint x="7480" y="720" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_170r39o_di" bpmnElement="Flow_170r39o">
-        <di:waypoint x="6400" y="920" />
-        <di:waypoint x="6400" y="700" />
-        <di:waypoint x="6460" y="700" />
+        <di:waypoint x="6660" y="920" />
+        <di:waypoint x="6660" y="700" />
+        <di:waypoint x="6810" y="700" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1govqr0_di" bpmnElement="Flow_1govqr0">
-        <di:waypoint x="6960" y="1000" />
-        <di:waypoint x="6960" y="1220" />
-        <di:waypoint x="7040" y="1220" />
+        <di:waypoint x="7580" y="960" />
+        <di:waypoint x="7640" y="960" />
+        <di:waypoint x="7640" y="1220" />
+        <di:waypoint x="7700" y="1220" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
