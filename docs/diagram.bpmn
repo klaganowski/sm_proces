@@ -418,7 +418,15 @@ BPMN: podproces-podpisanie_umowy.bpmn</bpmn:documentation>
     <bpmn:task id="Activity_138t2nz" name="Publikuje materiał" />
     <bpmn:task id="Activity_1surc0u" name="Przesyła statystyki do Opiekuna" />
     <bpmn:task id="Activity_10xi5h7" name="Poprawnie wystawia fakturę i wysyła przez KSeF">
-      <bpmn:documentation>URL: https://stormmedia-gg.monday.com/docs/18411443779</bpmn:documentation>
+      <bpmn:documentation>Twórca wystawia fakturę za zrealizowaną kampanię po otrzymaniu numeru rozliczenia od Opiekuna Twórcy.
+
+Twórca: 
+- wystawia fakturę dopiero po otrzymaniu numeru rozliczenia od Opiekuna Twórcy
+- umieszcza numer rozliczenia w nazwie usługi na fakturze
+- wystawia fakturę w walucie kampanii, a jeśli chce, aby kwota została przewalutowana, uwzględnia kurs z Google pomniejszony o 2% z tytułu przewalutowania
+- wysyła fakturę przez KSeF
+
+Twórcy będący mikroprzedsiębiorcami (których sumaryczna miesięczna sprzedaż nie przekracza 10 000 PLN) mają możliwość wystawiania faktur bez KSeF (przesyłają je wtedy na maila faktury@stormmedia.gg), jednak dla nas preferowaną metodą jest i tak KSeF</bpmn:documentation>
       <bpmn:outgoing>Flow_1hy3541</bpmn:outgoing>
     </bpmn:task>
     <bpmn:endEvent id="Event_1mvl9lo">
